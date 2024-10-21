@@ -21,9 +21,6 @@
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.4",
-    "framer-motion": "^4.1.17",
-    "chart.js": "^2.9.4",
-    "react-chartjs-2": "^2.11.1",
     "classlist.js": "^1.1.20150312",  
     "web-animations-js": "^2.3.2"     
   },
