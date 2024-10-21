@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { trigger, style, animate, transition } from '@angular/animations';
 
 @Component({
@@ -14,13 +15,26 @@ import { trigger, style, animate, transition } from '@angular/animations';
     ])
   ]
 })
-export class BubblesComponent {
-  paps: string[] = ['PAP1', 'PAP2', 'PAP3', 'PAP4'];  // Initial set of PAPs (could come from API)
-  filteredPaps: string[] = this.paps;  // The filtered list of PAPs
-  filterText = '';  // The text input by the user
+export class BubblesComponent implements OnInit {
+  paps: string[] = [];
+  filteredPaps: string[] = [];
+  filterText = '';
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.getPaps();
+  }
+
+  getPaps() {
+    this.http.get<string[]>('http://localhost:5000/api/paps')
+      .subscribe((data: string[]) => {
+        this.paps = data;
+        this.filteredPaps = data;
+      });
+  }
 
   filterPaps() {
-    // Filter based on user input
     this.filteredPaps = this.paps.filter(pap => 
       pap.toLowerCase().startsWith(this.filterText.toLowerCase()));
   }
