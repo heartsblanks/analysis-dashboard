@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { trigger, style, animate, transition, keyframes } from '@angular/animations';
+import { trigger, style, animate, transition } from '@angular/animations';
 
 @Component({
   selector: 'app-bubbles',
@@ -8,48 +8,48 @@ import { trigger, style, animate, transition, keyframes } from '@angular/animati
   styleUrls: ['./bubbles.component.scss'],
   animations: [
     trigger('bubbleAnimation', [
-      transition(':leave', [
-        animate(
-          '1s ease-out',
-          keyframes([
-            style({ transform: 'scale(1)', offset: 0 }),
-            style({ transform: 'scale(1.5)', offset: 0.5 }),
-            style({ transform: 'scale(0)', offset: 1 }),
-          ])
-        ),
+      transition(':enter', [
+        style({ transform: 'scale(0)', opacity: 0 }),
+        animate('300ms ease-out', style({ transform: 'scale(1)', opacity: 1 }))
       ]),
-    ]),
-  ],
+      transition(':leave', [
+        animate('300ms ease-in', style({ transform: 'scale(0)', opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class BubblesComponent implements OnInit {
   paps: string[] = [];
   filteredPaps: string[] = [];
-  filterText: string = '';
+  filterText = '';
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit(): void {
-    this.fetchPaps();
+  ngOnInit() {
+    this.loadPaps();
   }
 
-  fetchPaps(): void {
+  // Load PAPs from the API
+  loadPaps() {
     this.http.get<string[]>('http://localhost:5000/api/paps').subscribe(
-      (data: string[]) => {
+      (data) => {
         this.paps = data;
-        this.filteredPaps = data;
+        this.filteredPaps = [...this.paps]; // Initialize filteredPaps with all PAPs
       },
       (error) => {
-        console.error('Error fetching PAPs', error);
+        console.error('Error loading PAPs:', error);
       }
     );
   }
 
-  onFilterChange(): void {
+  // Filter PAPs based on user input
+  onFilterChange() {
     this.filteredPaps = this.paps.filter((pap) =>
-      pap.toLowerCase().startsWith(this.filterText.toLowerCase())
+      pap.toLowerCase().includes(this.filterText.toLowerCase())
     );
   }
 
+  // Track function to improve performance in ngFor
   trackByPap(index: number, pap: string): string {
     return pap;
   }
