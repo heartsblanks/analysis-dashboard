@@ -1,5 +1,9 @@
+<div class="search-container">
+  <input [(ngModel)]="filterText" (input)="filterPaps()" placeholder="Search PAPs...">
+</div>
+
 <div class="bubbles">
-  <div *ngFor="let pap of paps" class="bubble">
+  <div *ngFor="let pap of filteredPaps" class="bubble" [@bubbleAnimation]>
     {{ pap }}
   </div>
 </div>
