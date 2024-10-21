@@ -29,10 +29,29 @@ input {
   justify-content: center;
   animation: float 3s infinite ease-in-out;
   transition: transform 0.5s, opacity 0.5s;
+  cursor: pointer;
+}
+
+.bubble:hover {
+  transform: scale(1.1);
 }
 
 @keyframes float {
   0% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
   100% { transform: translateY(0); }
+}
+
+/* Bubble disappearing animation */
+@keyframes burst {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* Add animation when bubbles are filtered out */
+.bubble[hidden] {
+  animation: burst 1s ease-out;
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
 }
