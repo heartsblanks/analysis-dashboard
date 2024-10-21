@@ -31,7 +31,7 @@ export class BubblesComponent implements OnInit {
 
   // Load PAPs from the API
   loadPaps() {
-    this.http.get<string[]>('http://localhost:5000/api/paps').subscribe(
+    this.http.get<string[]>('/api/paps').subscribe(
       (data) => {
         this.paps = data;
         this.filteredPaps = [...this.paps]; // Initialize filteredPaps with all PAPs
