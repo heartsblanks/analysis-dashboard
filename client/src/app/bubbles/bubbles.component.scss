@@ -1,6 +1,21 @@
+.search-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+  width: 300px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+}
+
 .bubbles {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .bubble {
@@ -12,11 +27,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: burst 5s infinite;
+  animation: float 3s infinite ease-in-out;
+  transition: transform 0.5s, opacity 0.5s;
 }
 
-@keyframes burst {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
 }
