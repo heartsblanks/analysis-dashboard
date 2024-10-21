@@ -1,18 +1,4 @@
 <div class="filter-container">
-  <input
-    type="text"
-    [(ngModel)]="filterText"
-    (input)="onFilterChange()"
-    placeholder="Filter PAPs..."
-  />
+  <input type="text" (input)="onFilterChange($event)" placeholder="Start typing to filter bubbles..." tabindex="0" />
 </div>
-
-<div class="bubble-container">
-  <div
-    class="bubble"
-    *ngFor="let pap of filteredPaps; trackBy: trackByPap"
-    [@bubbleAnimation]
-  >
-    {{ pap }}
-  </div>
-</div>
+<div id="bubble-chart"></div>
