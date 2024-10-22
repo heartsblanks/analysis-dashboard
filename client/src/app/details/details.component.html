@@ -3,42 +3,37 @@
 
   <section>
     <h2>Queues</h2>
+
+    <!-- If queues exist, display them -->
     <div *ngIf="queues.length > 0">
-      <table>
-        <thead>
-          <tr>
-            <th>Queue Name</th>
-            <th>Queue Type</th>
-            <th>Definition Type</th>
-            <th>Attributes</th>
-            <th>Target Queue (If Exists)</th>
-            <th>Target Attributes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let queue of queues">
-            <td>{{ queue.queue_name }}</td>
-            <td>{{ queue.queue_type }}</td>
-            <td>
-              <span *ngFor="let def of queue.definitions">
-                {{ def.type }}
-              </span>
-            </td>
-            <td>
-              <span *ngFor="let def of queue.definitions">
-                {{ def.attribute_key }}: {{ def.attribute_value }}
-              </span>
-            </td>
-            <td *ngIf="queue.target_queue">
-              {{ queue.target_queue.queue_name }}
-            </td>
-            <td *ngIf="queue.target_queue">
-              {{ queue.target_queue.attributes.attribute_key }}: {{ queue.target_queue.attributes.attribute_value }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div *ngFor="let queue of queues" class="queue-section">
+        <h3>Queue Name: {{ queue.queue_name }}</h3>
+        <p>Queue Type: {{ queue.queue_type }}</p>
+
+        <!-- Display Queue Attributes -->
+        <div class="queue-attributes">
+          <h4>Attributes:</h4>
+          <ul>
+            <li *ngFor="let def of queue.definitions">
+              <strong>{{ def.attribute_key }}:</strong> {{ def.attribute_value }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- Display Target Queue (if exists) -->
+        <div *ngIf="queue.target_queue" class="target-queue">
+          <h4>Target Queue: {{ queue.target_queue.queue_name }}</h4>
+          <ul>
+            <li>
+              <strong>{{ queue.target_queue.attributes.attribute_key }}:</strong> {{ queue.target_queue.attributes.attribute_value }}
+            </li>
+          </ul>
+        </div>
+
+      </div>
     </div>
+
+    <!-- If no queues are found -->
     <div *ngIf="queues.length === 0">
       <p>No queues found for this PAP.</p>
     </div>
