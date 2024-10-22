@@ -29,6 +29,9 @@ export class DetailsComponent implements OnInit {
   expandedUembdSection: boolean = false;  // Track the expanded/collapsed state of the UEMBD section
   webservices: any[] = [];  // Store webservices data
   expandedWebservicesSection: boolean = false;  // Track the expanded/collapsed state for the webservices section
+  otherProperties: any[] = [];  // Store other properties data
+  expandedOtherPropertiesSection: boolean = false;  // Track the expanded/collapsed state for the other properties section
+
 
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
@@ -38,6 +41,7 @@ export class DetailsComponent implements OnInit {
   this.loadQueues();
   this.loadUembdEntries();  // Load UEMBD entries
   this.loadWebservices();  // Load Webservices
+  this.loadOtherProperties();  // Load Other Properties
 }
 
   // Method to load queues
@@ -65,6 +69,15 @@ loadWebservices() {
     this.webservices = data;
   }, error => {
     console.error('Error loading webservices:', error);
+  });
+}
+
+// Load Other Properties
+loadOtherProperties() {
+  this.http.get<any[]>(`/api/paps/${this.pap}/other_properties`).subscribe(data => {
+    this.otherProperties = data;
+  }, error => {
+    console.error('Error loading other properties:', error);
   });
 }
 
