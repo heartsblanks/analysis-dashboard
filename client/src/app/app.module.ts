@@ -1,21 +1,32 @@
-import { RouterModule, Routes } from '@angular/router';
-import { DetailsComponent } from './details/details.component';  // <-- Import the new component
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';  // <-- Import RouterModule and Routes
 
+import { AppComponent } from './app.component';
+import { BubblesComponent } from './bubbles/bubbles.component';
+import { DetailsComponent } from './details/details.component';  // <-- Import the new details component
+
+// Define routes
 const routes: Routes = [
-  { path: '', component: BubblesComponent },  // Home page with bubbles
-  { path: 'details/:pap', component: DetailsComponent }  // New details page for clicked PAP
+  { path: '', component: BubblesComponent },  // Default route to display bubbles
+  { path: 'details/:pap', component: DetailsComponent }  // Route to display details when PAP is clicked
 ];
 
 @NgModule({
-  declarations: [AppComponent, BubblesComponent, DetailsComponent],  // <-- Add DetailsComponent
+  declarations: [
+    AppComponent,
+    BubblesComponent,
+    DetailsComponent  // <-- Declare DetailsComponent
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    BrowserAnimationsModule,
     FormsModule,
-    RouterModule.forRoot(routes)  // <-- Add RouterModule
+    RouterModule.forRoot(routes)  // <-- Add RouterModule and pass in the routes
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
