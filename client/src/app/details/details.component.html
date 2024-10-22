@@ -6,28 +6,38 @@
 
     <!-- If queues exist, display them -->
     <div *ngIf="queues.length > 0">
-      <div *ngFor="let queue of queues" class="queue-section">
-        <h3>Queue Name: {{ queue.queue_name }}</h3>
-        <p>Queue Type: {{ queue.queue_type }}</p>
+      <div *ngFor="let queue of queues; let i = index" class="queue-section">
 
-        <!-- Display Queue Attributes -->
-        <div class="queue-attributes">
-          <h4>Attributes:</h4>
-          <ul>
-            <li *ngFor="let def of queue.definitions">
-              <strong>{{ def.attribute_key }}:</strong> {{ def.attribute_value }}
-            </li>
-          </ul>
-        </div>
+        <!-- Queue name clickable to expand/collapse -->
+        <h3 (click)="toggleQueue(i)" class="queue-header">
+          {{ queue.queue_name }} 
+          <span *ngIf="expandedQueues[i]">[-]</span>  <!-- Collapse indicator -->
+          <span *ngIf="!expandedQueues[i]">[+]</span> <!-- Expand indicator -->
+        </h3>
 
-        <!-- Display Target Queue (if exists) -->
-        <div *ngIf="queue.target_queue" class="target-queue">
-          <h4>Target Queue: {{ queue.target_queue.queue_name }}</h4>
-          <ul>
-            <li>
-              <strong>{{ queue.target_queue.attributes.attribute_key }}:</strong> {{ queue.target_queue.attributes.attribute_value }}
-            </li>
-          </ul>
+        <!-- Queue details only shown if expanded -->
+        <div *ngIf="expandedQueues[i]" class="queue-details">
+          <p>Queue Type: {{ queue.queue_type }}</p>
+
+          <!-- Display Queue Attributes -->
+          <div class="queue-attributes">
+            <h4>Attributes:</h4>
+            <ul>
+              <li *ngFor="let def of queue.definitions">
+                <strong>{{ def.attribute_key }}:</strong> {{ def.attribute_value }}
+              </li>
+            </ul>
+          </div>
+
+          <!-- Display Target Queue (if exists) -->
+          <div *ngIf="queue.target_queue" class="target-queue">
+            <h4>Target Queue: {{ queue.target_queue.queue_name }}</h4>
+            <ul>
+              <li>
+                <strong>{{ queue.target_queue.attributes.attribute_key }}:</strong> {{ queue.target_queue.attributes.attribute_value }}
+              </li>
+            </ul>
+          </div>
         </div>
 
       </div>
