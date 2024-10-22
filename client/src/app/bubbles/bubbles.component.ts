@@ -46,32 +46,55 @@ export class BubblesComponent implements OnInit {
   }
 
   createBubbleChart(data: any[]) {
-    this.radiusScale = d3.scaleSqrt()
-      .domain([1, d3.max(data, d => d.count)])
-      .range([20, 60]);
+  this.radiusScale = d3.scaleSqrt()
+    .domain([1, d3.max(data, d => d.count)])
+    .range([20, 60]);
 
-    this.simulation = d3.forceSimulation(data)
-      .force("charge", d3.forceManyBody().strength(-15))
-      .force("center", d3.forceCenter(this.width / 2, this.height / 2))
-      .force("collision", d3.forceCollide().radius(d => this.radiusScale(d.count) + 5).strength(1))
-      .on("tick", () => this.ticked());
+  // Define an SVG gradient for bubbles
+  const defs = this.svg.append("defs");
 
-    this.bubbles = this.svg.selectAll(".bubble")
-      .data(data)
-      .enter().append("g")
-      .attr("class", "bubble");
+  const gradient = defs.append("radialGradient")
+    .attr("id", "bubbleGradient")  // <-- Define bubbleGradient
+    .attr("cx", "50%")
+    .attr("cy", "50%")
+    .attr("r", "50%");
 
-    this.bubbles.append("circle")
-      .attr("r", d => this.radiusScale(d.count))
-      .attr("fill", "url(#bubbleGradient)");
+  gradient.append("stop")
+    .attr("offset", "0%")
+    .attr("stop-color", "#ffffff")  // Lighter color at the center
+    .attr("stop-opacity", 0.8);
 
-    this.bubbles.append("text")
-      .attr("class", "bubble-text")
-      .attr("dy", ".3em")
-      .text(d => d.A);
+  gradient.append("stop")
+    .attr("offset", "100%")
+    .attr("stop-color", "#1f77b4")  // Darker color at the edges
+    .attr("stop-opacity", 1);
 
-    this.bubbles.on("click", (event, d) => this.onBubbleClick(d));
-  }
+  // Set up the simulation with boundary constraints
+  this.simulation = d3.forceSimulation(data)
+    .force("charge", d3.forceManyBody().strength(-15))
+    .force("center", d3.forceCenter(this.width / 2, this.height / 2))
+    .force("collision", d3.forceCollide().radius(d => this.radiusScale(d.count) + 5).strength(1))
+    .force("x", d3.forceX(this.width / 2).strength(0.1))
+    .force("y", d3.forceY(this.height / 2).strength(0.1))
+    .on("tick", () => this.ticked());
+
+  // Create the bubble elements
+  this.bubbles = this.svg.selectAll(".bubble")
+    .data(data)
+    .enter().append("g")
+    .attr("class", "bubble");
+
+  this.bubbles.append("circle")
+    .attr("r", d => this.radiusScale(d.count))
+    .attr("fill", "url(#bubbleGradient)");  // <-- Apply the gradient to each bubble
+
+  this.bubbles.append("text")
+    .attr("class", "bubble-text")
+    .attr("dy", ".3em")
+    .text(d => d.A);
+
+  this.bubbles.on("click", (event, d) => this.onBubbleClick(d));
+}
 
   ticked() {
     this.bubbles.attr("transform", d => {
