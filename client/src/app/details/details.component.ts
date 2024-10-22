@@ -34,6 +34,10 @@ export class DetailsComponent implements OnInit {
   
   integrationServers: any[] = [];  // Store integration servers data
   expandedIntegrationServersSection: boolean = false;  // Track the expanded/collapsed state for the integration servers section
+  databases: any[] = [];  // Store databases data
+  operationsAndTables: any[] = [];  // Store operations and tables data
+  expandedDatabasesSection: boolean = false;  // Track the expanded/collapsed state for the databases section
+
 
 
 
@@ -46,6 +50,7 @@ export class DetailsComponent implements OnInit {
   this.loadWebservices();  // Load Webservices
   this.loadOtherProperties();  // Load Other Properties
   this.loadIntegrationServers();  // Load Integration Servers
+  this.loadDatabases();  // Load Databases, Operations, and Tables
 }
 
   // Method to load queues
@@ -82,6 +87,16 @@ loadIntegrationServers() {
     this.integrationServers = data;
   }, error => {
     console.error('Error loading integration servers:', error);
+  });
+}
+
+// Load Databases, Operations, and Tables
+loadDatabases() {
+  this.http.get<any>(`/api/paps/${this.pap}/databases`).subscribe(data => {
+    this.databases = data.databases;
+    this.operationsAndTables = data.operations_and_tables;
+  }, error => {
+    console.error('Error loading databases:', error);
   });
 }
 
