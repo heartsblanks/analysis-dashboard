@@ -14,7 +14,6 @@ export class DetailsComponent implements OnInit {
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit() {
-    // Get the PAP name from the route parameters
     this.pap = this.route.snapshot.paramMap.get('pap');
     this.loadQueues();
   }
