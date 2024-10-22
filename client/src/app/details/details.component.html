@@ -90,6 +90,47 @@
 
     </div>
   </section>
+  <!-- Databases, Operations, and Tables Section -->
+<section>
+  <h2 (click)="expandedDatabasesSection = !expandedDatabasesSection" class="section-header">
+    Databases, Operations, and Tables
+    <span *ngIf="expandedDatabasesSection">[-]</span>
+    <span *ngIf="!expandedDatabasesSection">[+]</span>
+  </h2>
+
+  <div *ngIf="expandedDatabasesSection" [@expandCollapseAnimation]>
+
+    <!-- Display Databases Grouped by Environment -->
+    <h3>Databases by Environment</h3>
+    <div *ngIf="databases.length > 0">
+      <div *ngFor="let database of databases" class="database-entry">
+        <ul>
+          <li><strong>Database Name:</strong> {{ database.DB_NAME }}</li>
+          <li><strong>Environment:</strong> {{ database.ENVIRONMENT }}</li>
+          <li><strong>Value:</strong> {{ database.VALUE }}</li>
+        </ul>
+      </div>
+    </div>
+    <div *ngIf="databases.length === 0">
+      <p>No databases found for this PAP.</p>
+    </div>
+
+    <!-- Display SQL Operations and Tables -->
+    <h3>Operations and Tables</h3>
+    <div *ngIf="operationsAndTables.length > 0">
+      <div *ngFor="let op of operationsAndTables" class="operation-entry">
+        <ul>
+          <li><strong>Operation Type:</strong> {{ op.OPERATION_TYPE }}</li>
+          <li><strong>Table Name:</strong> {{ op.TABLE_NAME }}</li>
+        </ul>
+      </div>
+    </div>
+    <div *ngIf="operationsAndTables.length === 0">
+      <p>No operations or tables found for this PAP.</p>
+    </div>
+
+  </div>
+</section>
   <!-- Webservices Section -->
 <section>
   <h2 (click)="expandedWebservicesSection = !expandedWebservicesSection" class="section-header">
