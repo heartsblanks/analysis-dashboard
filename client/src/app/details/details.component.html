@@ -8,24 +8,25 @@
       <span *ngIf="!expandedQueuesSection">[+]</span>
     </h2>
 
+    <!-- Accordion section for queues -->
     <div *ngIf="expandedQueuesSection" [@expandCollapseAnimation]>
       <!-- If queues exist, display them -->
-      <div *ngIf="queues.length > 0">
-        <div *ngFor="let queue of queues; let i = index" class="queue-card" (click)="toggleQueue(i)">
+      <div *ngIf="queues.length > 0" class="accordion">
+        <div *ngFor="let queue of queues; let i = index" class="accordion-item">
           <!-- Queue name clickable to expand/collapse -->
-          <div class="queue-header">
-            <h3>{{ queue.queue_name }}</h3>
-            <span *ngIf="expandedQueues[i]">[-]</span>
-            <span *ngIf="!expandedQueues[i]">[+]</span>
-          </div>
+          <h3 (click)="toggleQueue(i)" class="accordion-header">
+            {{ queue.queue_name }} 
+            <span *ngIf="expandedQueues[i]">[-]</span> <!-- Collapse indicator -->
+            <span *ngIf="!expandedQueues[i]">[+]</span> <!-- Expand indicator -->
+          </h3>
 
           <!-- Queue details only shown if expanded -->
-          <div *ngIf="expandedQueues[i]" class="queue-details" [@expandCollapseAnimation]>
-            <p><strong>Type:</strong> {{ queue.queue_type }}</p>
+          <div *ngIf="expandedQueues[i]" class="accordion-body" [@expandCollapseAnimation]>
+            <p><strong>Queue Type:</strong> {{ queue.queue_type }}</p>
 
-            <!-- Queue Attributes -->
+            <!-- Display Queue Attributes -->
             <div class="queue-attributes">
-              <h4>Attributes</h4>
+              <h4>Attributes:</h4>
               <ul>
                 <li *ngFor="let def of queue.definitions">
                   <strong>{{ def.attribute_key }}:</strong> {{ def.attribute_value }}
@@ -33,7 +34,7 @@
               </ul>
             </div>
 
-            <!-- Target Queue -->
+            <!-- Display Target Queue (if exists) -->
             <div *ngIf="queue.target_queue" class="target-queue">
               <h4>Target Queue: {{ queue.target_queue.queue_name }}</h4>
               <ul>
