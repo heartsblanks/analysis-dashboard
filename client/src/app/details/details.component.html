@@ -115,4 +115,29 @@
     </div>
   </div>
 </section>
+  <!-- Other Properties Section -->
+<section>
+  <h2 (click)="expandedOtherPropertiesSection = !expandedOtherPropertiesSection" class="section-header">
+    Other Properties
+    <span *ngIf="expandedOtherPropertiesSection">[-]</span>
+    <span *ngIf="!expandedOtherPropertiesSection">[+]</span>
+  </h2>
+
+  <div *ngIf="expandedOtherPropertiesSection" [@expandCollapseAnimation]>
+    <div *ngIf="otherProperties.length > 0">
+      <div *ngFor="let property of otherProperties" class="other-property-entry">
+        <ul>
+          <li *ngFor="let key of objectKeys(property)">
+            <strong>{{ key }}:</strong> {{ property[key] }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- No Other Properties Found -->
+    <div *ngIf="otherProperties.length === 0">
+      <p>No Other Properties found for this PAP.</p>
+    </div>
+  </div>
+</section>
 </div>
