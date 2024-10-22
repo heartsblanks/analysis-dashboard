@@ -24,29 +24,32 @@
   justify-content: space-between;
 }
 
-.queue-card {
-  padding: 20px;
+.accordion-item {
   border: 1px solid #ccc;
+  border-radius: 5px;
   margin-bottom: 15px;
   background-color: #fff;
-  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease;
   cursor: pointer;
 }
 
-.queue-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.queue-header {
-  font-size: 22px;
+.accordion-header {
+  padding: 15px;
+  font-size: 18px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ccc;
   color: #007bff;
+  font-weight: 500;
 }
 
-.queue-details {
-  padding: 10px 20px;
+.accordion-header:hover {
+  background-color: #f0f4f8;
+}
+
+.accordion-body {
+  padding: 15px;
+  background-color: #f9f9f9;
 }
 
 .queue-attributes ul {
@@ -59,9 +62,8 @@
 }
 
 .target-queue {
-  background-color: #f0f4f8;
+  background-color: #e3f2fd;
   padding: 10px;
-  border-left: 3px solid #007bff;
   margin-top: 10px;
-  border-radius: 5px;
+  border-left: 3px solid #007bff;
 }
