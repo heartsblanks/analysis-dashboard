@@ -10,19 +10,31 @@
             <th>Queue Name</th>
             <th>Queue Type</th>
             <th>Definition Type</th>
-            <th>Definition Name</th>
-            <th>Attribute</th>
-            <th>Attribute Value</th>
+            <th>Attributes</th>
+            <th>Target Queue (If Exists)</th>
+            <th>Target Attributes</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let queue of queues">
             <td>{{ queue.queue_name }}</td>
             <td>{{ queue.queue_type }}</td>
-            <td>{{ queue.definition_type }}</td>
-            <td>{{ queue.definition_name }}</td>
-            <td>{{ queue.attribute_key }}</td>
-            <td>{{ queue.attribute_value }}</td>
+            <td>
+              <span *ngFor="let def of queue.definitions">
+                {{ def.type }}
+              </span>
+            </td>
+            <td>
+              <span *ngFor="let def of queue.definitions">
+                {{ def.attribute_key }}: {{ def.attribute_value }}
+              </span>
+            </td>
+            <td *ngIf="queue.target_queue">
+              {{ queue.target_queue.queue_name }}
+            </td>
+            <td *ngIf="queue.target_queue">
+              {{ queue.target_queue.attributes.attribute_key }}: {{ queue.target_queue.attributes.attribute_value }}
+            </td>
           </tr>
         </tbody>
       </table>
