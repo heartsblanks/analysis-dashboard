@@ -10,7 +10,8 @@ import { HttpClient } from '@angular/common/http';
 export class DetailsComponent implements OnInit {
   pap: string;
   queues: any[] = [];
-  expandedQueues: boolean[] = [];  // <-- To track expanded/collapsed state
+  expandedQueues: boolean[] = [];  // Track expanded/collapsed state of individual queues
+  expandedQueuesSection: boolean = false;  // Track the expanded/collapsed state of the entire Queues section
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
@@ -30,5 +31,9 @@ export class DetailsComponent implements OnInit {
 
   toggleQueue(index: number) {
     this.expandedQueues[index] = !this.expandedQueues[index];  // Toggle the state of the clicked queue
+  }
+
+  toggleQueues() {
+    this.expandedQueuesSection = !this.expandedQueuesSection;  // Toggle the state of the entire queues section
   }
 }
