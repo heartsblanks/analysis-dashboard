@@ -1,5 +1,6 @@
 import { Component, OnInit, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router'; // <-- Import Router for navigation
 import * as d3 from 'd3';
 
 @Component({
@@ -17,7 +18,7 @@ export class BubblesComponent implements OnInit {
   simulation: any;
   bubbles: any;
 
-  constructor(private http: HttpClient, private elRef: ElementRef, private renderer: Renderer2) {}
+  constructor(private router: Router, private http: HttpClient, private elRef: ElementRef, private renderer: Renderer2) {}
 
   ngOnInit() {
     this.width = window.innerWidth;
@@ -45,59 +46,53 @@ export class BubblesComponent implements OnInit {
   }
 
   createBubbleChart(data: any[]) {
-  // Define radius scale
-  this.radiusScale = d3.scaleSqrt()
-    .domain([1, d3.max(data, d => d.count)])
-    .range([20, 60]);
+    this.radiusScale = d3.scaleSqrt()
+      .domain([1, d3.max(data, d => d.count)])
+      .range([20, 60]);
 
-  // Define an SVG gradient for bubbles
-  const defs = this.svg.append("defs");
+    const defs = this.svg.append("defs");
 
-  const gradient = defs.append("radialGradient")
-    .attr("id", "bubbleGradient")
-    .attr("cx", "50%")
-    .attr("cy", "50%")
-    .attr("r", "50%");
+    const gradient = defs.append("radialGradient")
+      .attr("id", "bubbleGradient")
+      .attr("cx", "50%")
+      .attr("cy", "50%")
+      .attr("r", "50%");
 
-  gradient.append("stop")
-    .attr("offset", "0%")
-    .attr("stop-color", "#ffffff") // Lighter color at the center
-    .attr("stop-opacity", 0.8);
+    gradient.append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", "#ffffff")
+      .attr("stop-opacity", 0.8);
 
-  gradient.append("stop")
-    .attr("offset", "100%")
-    .attr("stop-color", "#1f77b4") // Darker color at the edges
-    .attr("stop-opacity", 1);
+    gradient.append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", "#1f77b4")
+      .attr("stop-opacity", 1);
 
-  // Set up the simulation with boundary constraints
-  this.simulation = d3.forceSimulation(data)
-    .force("charge", d3.forceManyBody().strength(-15))
-    .force("center", d3.forceCenter(this.width / 2, this.height / 2))
-    .force("collision", d3.forceCollide().radius(d => this.radiusScale(d.count) + 5).strength(1))
-    .force("x", d3.forceX(this.width / 2).strength(0.1))  // Add forces to keep bubbles within boundaries
-    .force("y", d3.forceY(this.height / 2).strength(0.1))
-    .on("tick", () => this.ticked());
+    this.simulation = d3.forceSimulation(data)
+      .force("charge", d3.forceManyBody().strength(-15))
+      .force("center", d3.forceCenter(this.width / 2, this.height / 2))
+      .force("collision", d3.forceCollide().radius(d => this.radiusScale(d.count) + 5).strength(1))
+      .force("x", d3.forceX(this.width / 2).strength(0.1))
+      .force("y", d3.forceY(this.height / 2).strength(0.1))
+      .on("tick", () => this.ticked());
 
-  // Create the bubble elements
-  this.bubbles = this.svg.selectAll(".bubble")
-    .data(data)
-    .enter().append("g")
-    .attr("class", "bubble");
+    this.bubbles = this.svg.selectAll(".bubble")
+      .data(data)
+      .enter().append("g")
+      .attr("class", "bubble");
 
-  this.bubbles.append("circle")
-    .attr("r", d => this.radiusScale(d.count))
-    .attr("fill", "url(#bubbleGradient)");  // Apply the gradient to each bubble
+    this.bubbles.append("circle")
+      .attr("r", d => this.radiusScale(d.count))
+      .attr("fill", "url(#bubbleGradient)");
 
-  this.bubbles.append("text")
-    .attr("class", "bubble-text")
-    .attr("dy", ".3em")
-    .text(d => d.A);
+    this.bubbles.append("text")
+      .attr("class", "bubble-text")
+      .attr("dy", ".3em")
+      .text(d => d.A);
 
-  // Add click listener for bubbles
-  this.bubbles.on("click", (event, d) => this.onBubbleClick(d));
-}
+    this.bubbles.on("click", (event, d) => this.onBubbleClick(d)); // <-- Add click event listener
+  }
 
-  // Reposition bubbles during the simulation, ensuring they stay within the viewport
   ticked() {
     this.bubbles.attr("transform", d => {
       d.x = Math.max(this.radiusScale(d.count), Math.min(this.width - this.radiusScale(d.count), d.x));
@@ -106,39 +101,10 @@ export class BubblesComponent implements OnInit {
     });
   }
 
+  // Navigate to details page when a PAP bubble is clicked
   onBubbleClick(d) {
-    alert(`PAP clicked: ${d.A}`);
-  }
-
-  onFilterChange(event: any) {
-    const searchTerm = event.target.value.toLowerCase();
-    const filteredData = this.paps.filter(d => d.A.toLowerCase().includes(searchTerm));
-
-    this.updateBubbles(filteredData);
-  }
-
-  updateBubbles(filteredData: any[]) {
-    this.svg.selectAll(".bubble").remove();
-
-    this.simulation.nodes(filteredData)
-      .force("center", d3.forceCenter(this.width / 2, this.height / 2))
-      .alpha(1).restart();
-
-    this.bubbles = this.svg.selectAll(".bubble")
-      .data(filteredData)
-      .enter().append("g")
-      .attr("class", "bubble");
-
-    this.bubbles.append("circle")
-      .attr("r", d => this.radiusScale(d.count))
-      .attr("class", "bubble-circle");
-
-    this.bubbles.append("text")
-      .attr("class", "bubble-text")
-      .attr("dy", ".3em")
-      .text(d => d.A);
-
-    this.bubbles.on("click", (event, d) => this.onBubbleClick(d));
+    // Use the router to navigate to the details page with the clicked PAP
+    this.router.navigate(['/details', d.A]);  // <-- Navigate to /details/PAP_NAME
   }
 
   @HostListener('window:resize', ['$event'])
