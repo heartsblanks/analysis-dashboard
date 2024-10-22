@@ -11,7 +11,7 @@ body, html {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;  // Ensure it's above other elements
+  z-index: 1000;
 }
 
 #bubble-chart {
@@ -25,51 +25,21 @@ body, html {
 .bubble {
   cursor: pointer;
   transition: opacity 0.3s, transform 0.3s;
-  transform: translateZ(0);  // Trigger GPU for smoother animations
+}
 
-  // 3D Water Bubble Styling
-  circle.bubble-circle {
-    fill: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.7), rgba(135, 206, 235, 1), rgba(0, 162, 232, 1));
-    stroke: rgba(255, 255, 255, 0.4);
-    stroke-width: 3;
+.bubble circle {
+  animation: pulse 5s infinite ease-in-out;
+}
 
-    // Subtle shadow for depth
-    filter: drop-shadow(0px 5px 10px rgba(0, 0, 0, 0.2)) drop-shadow(0px 15px 30px rgba(0, 0, 0, 0.1));
-
-    // Inner glossy highlight for 3D effect
-    &::before {
-      content: '';
-      position: absolute;
-      top: -20px;
-      left: -20px;
-      width: 80px;
-      height: 80px;
-      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
-      border-radius: 50%;
-      pointer-events: none;
-      opacity: 0.8;
-    }
-  }
-
-  .bubble-text {
-    font-size: 14px;
-    font-weight: bold;
-    fill: #fff;
-    pointer-events: none;
-    text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
-  }
-
-  &:hover {
-    transform: scale(1.1);  // Slight scale effect on hover
-  }
+.bubble-text {
+  font-size: 14px;
+  font-weight: bold;
+  fill: #fff;
+  pointer-events: none;
 }
 
 @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
-}
-
-.bubble circle {
-  animation: pulse 5s infinite ease-in-out;
 }
