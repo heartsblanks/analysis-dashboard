@@ -195,6 +195,42 @@ def get_integration_servers_for_pap(pap):
         return jsonify(result), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+@app.route('/api/paps/<pap>/databases', methods=['GET'])
+def get_databases_for_pap(pap):
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+
+        # Step 1: Fetch database properties grouped by environment
+        cursor.execute("""
+            SELECT dp.DB_NAME, dp.ENVIRONMENT, dp.VALUE
+            FROM DATABASE_PROPERTIES dp
+            JOIN PROPERTY_FILES pf ON dp.FILE_ID = pf.FILE_ID
+            WHERE pf.PAP_ID = (SELECT PAP_ID FROM PAPS WHERE PAP_NAME = ?)
+            ORDER BY dp.ENVIRONMENT
+        """, (pap,))
+        databases = cursor.fetchall()
+
+        # Step 2: Fetch SQL operations and tables associated with the PAP
+        cursor.execute("""
+            SELECT so.OPERATION_TYPE, so.TABLE_NAME
+            FROM SQL_OPERATIONS so
+            JOIN FUNCTIONS f ON so.FUNCTION_ID = f.FUNCTION_ID
+            JOIN ESQLFILES ef ON f.ESQL_FILE_ID = ef.ESQL_FILE_ID
+            JOIN PROJECTS p ON ef.PROJECT_ID = p.PROJECT_ID
+            WHERE p.PAP_ID = (SELECT PAP_ID FROM PAPS WHERE PAP_NAME = ?)
+        """, (pap,))
+        operations_and_tables = cursor.fetchall()
+
+        result = {
+            'databases': [dict(row) for row in databases],
+            'operations_and_tables': [dict(row) for row in operations_and_tables]
+        }
+
+        conn.close()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
