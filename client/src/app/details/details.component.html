@@ -1,55 +1,61 @@
 <div class="pap-details">
   <h1 class="title">PAP: {{ pap }}</h1>
 
+  <!-- UEMBD Entries Section -->
   <section>
-    <h2 (click)="toggleQueues()" class="section-header">
-      Queues
-      <span *ngIf="expandedQueuesSection">[-]</span>
-      <span *ngIf="!expandedQueuesSection">[+]</span>
+    <h2 (click)="toggleUembdSection()" class="section-header">
+      UEMBD* Entries
+      <span *ngIf="expandedUembdSection">[-]</span>
+      <span *ngIf="!expandedUembdSection">[+]</span>
     </h2>
 
-    <!-- Accordion section for queues -->
-    <div *ngIf="expandedQueuesSection" [@expandCollapseAnimation]>
-      <!-- If queues exist, display them -->
-      <div *ngIf="queues.length > 0" class="accordion">
-        <div *ngFor="let queue of queues; let i = index" class="accordion-item">
-          <!-- Queue name clickable to expand/collapse -->
-          <h3 (click)="toggleQueue(i)" class="accordion-header">
-            {{ queue.queue_name }} 
-            <span *ngIf="expandedQueues[i]">[-]</span> <!-- Collapse indicator -->
-            <span *ngIf="!expandedQueues[i]">[+]</span> <!-- Expand indicator -->
-          </h3>
+    <div *ngIf="expandedUembdSection" [@expandCollapseAnimation]>
 
-          <!-- Queue details only shown if expanded -->
-          <div *ngIf="expandedQueues[i]" class="accordion-body" [@expandCollapseAnimation]>
-            <p><strong>Queue Type:</strong> {{ queue.queue_type }}</p>
-
-            <!-- Display Queue Attributes -->
-            <div class="queue-attributes">
-              <h4>Attributes:</h4>
-              <ul>
-                <li *ngFor="let def of queue.definitions">
-                  <strong>{{ def.attribute_key }}:</strong> {{ def.attribute_value }}
-                </li>
-              </ul>
-            </div>
-
-            <!-- Display Target Queue (if exists) -->
-            <div *ngIf="queue.target_queue" class="target-queue">
-              <h4>Target Queue: {{ queue.target_queue.queue_name }}</h4>
-              <ul>
-                <li *ngFor="let attr of queue.target_queue.attributes">
-                  <strong>{{ attr.attribute_key }}:</strong> {{ attr.attribute_value }}
-                </li>
-              </ul>
-            </div>
-          </div>
+      <!-- UEMBD02T Entries -->
+      <h3>UEMBD02T Entries</h3>
+      <div *ngIf="uembdEntries.uembd02t.length > 0">
+        <div *ngFor="let entry of uembdEntries.uembd02t" class="uembd-entry">
+          <ul>
+            <li *ngFor="let key of objectKeys(entry)">
+              <strong>{{ key }}:</strong> {{ entry[key] }}
+            </li>
+          </ul>
         </div>
       </div>
-
-      <div *ngIf="queues.length === 0">
-        <p>No queues found for this PAP.</p>
+      <div *ngIf="uembdEntries.uembd02t.length === 0">
+        <p>No UEMBD02T entries found.</p>
       </div>
+
+      <!-- UEMBD20T Entries -->
+      <h3>UEMBD20T Entries</h3>
+      <div *ngIf="uembdEntries.uembd20t.length > 0">
+        <div *ngFor="let entry of uembdEntries.uembd20t" class="uembd-entry">
+          <ul>
+            <li *ngFor="let key of objectKeys(entry)">
+              <strong>{{ key }}:</strong> {{ entry[key] }}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div *ngIf="uembdEntries.uembd20t.length === 0">
+        <p>No UEMBD20T entries found.</p>
+      </div>
+
+      <!-- UEMBD21T Entries -->
+      <h3>UEMBD21T Entries</h3>
+      <div *ngIf="uembdEntries.uembd21t.length > 0">
+        <div *ngFor="let entry of uembdEntries.uembd21t" class="uembd-entry">
+          <ul>
+            <li *ngFor="let key of objectKeys(entry)">
+              <strong>{{ key }}:</strong> {{ entry[key] }}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div *ngIf="uembdEntries.uembd21t.length === 0">
+        <p>No UEMBD21T entries found.</p>
+      </div>
+
     </div>
   </section>
 </div>
