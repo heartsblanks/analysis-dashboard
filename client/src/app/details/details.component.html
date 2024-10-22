@@ -1,7 +1,39 @@
 <div class="pap-details">
   <h1 class="title">PAP: {{ pap }}</h1>
 
-  <!-- UEMBD Entries Section -->
+  <section>
+  <h2 (click)="toggleQueues()" class="section-header">
+    Queues
+    <span *ngIf="expandedQueuesSection">[-]</span>
+    <span *ngIf="!expandedQueuesSection">[+]</span>
+  </h2>
+
+  <!-- If the queues section is expanded -->
+  <div *ngIf="expandedQueuesSection" [@expandCollapseAnimation]>
+    <!-- Display the queues if available -->
+    <div *ngIf="queues.length > 0">
+      <div *ngFor="let queue of queues; let i = index" class="queue-item">
+        <!-- Queue name is clickable to expand/collapse queue details -->
+        <h3 (click)="toggleQueue(i)" class="queue-header">
+          {{ queue.queue_name }}
+          <span *ngIf="expandedQueues[i]">[-]</span>
+          <span *ngIf="!expandedQueues[i]">[+]</span>
+        </h3>
+
+        <!-- Queue details shown if expanded -->
+        <div *ngIf="expandedQueues[i]" class="queue-details" [@expandCollapseAnimation]>
+          <p><strong>Queue Type:</strong> {{ queue.queue_type }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Display if no queues are found -->
+    <div *ngIf="queues.length === 0">
+      <p>No queues found for this PAP.</p>
+    </div>
+  </div>
+</section>
+<!-- UEMBD Entries Section -->
   <section>
     <h2 (click)="toggleUembdSection()" class="section-header">
       UEMBD* Entries
