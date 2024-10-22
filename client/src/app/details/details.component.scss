@@ -5,6 +5,21 @@
   background-color: #f9f9f9;
 }
 
+.queue-header {
+  cursor: pointer;
+  color: #007bff;
+  margin: 0;
+}
+
+.queue-header:hover {
+  text-decoration: underline;
+}
+
+.queue-details {
+  margin-left: 20px;
+  padding: 10px;
+}
+
 .queue-attributes ul {
   list-style-type: none;
   padding-left: 0;
