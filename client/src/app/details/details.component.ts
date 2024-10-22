@@ -27,14 +27,18 @@ export class DetailsComponent implements OnInit {
   expandedQueues: boolean[] = [];  // Track expanded/collapsed state of individual queues
   expandedQueuesSection: boolean = false;  // Track the expanded/collapsed state of the entire Queues section
   expandedUembdSection: boolean = false;  // Track the expanded/collapsed state of the UEMBD section
+  webservices: any[] = [];  // Store webservices data
+  expandedWebservicesSection: boolean = false;  // Track the expanded/collapsed state for the webservices section
+
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
 
   ngOnInit() {
-    this.pap = this.route.snapshot.paramMap.get('pap');
-    this.loadQueues();
-    this.loadUembdEntries();  // Load UEMBD entries
-  }
+  this.pap = this.route.snapshot.paramMap.get('pap');
+  this.loadQueues();
+  this.loadUembdEntries();  // Load UEMBD entries
+  this.loadWebservices();  // Load Webservices
+}
 
   // Method to load queues
   loadQueues() {
@@ -54,6 +58,15 @@ export class DetailsComponent implements OnInit {
       console.error('Error loading UEMBD entries:', error);
     });
   }
+  
+// Load Webservices
+loadWebservices() {
+  this.http.get<any[]>(`/api/paps/${this.pap}/webservices`).subscribe(data => {
+    this.webservices = data;
+  }, error => {
+    console.error('Error loading webservices:', error);
+  });
+}
 
   // Toggle for the individual queues
   toggleQueue(index: number) {
