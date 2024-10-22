@@ -1,11 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { trigger, state, style, animate, transition } from '@angular/animations';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
-  styleUrls: ['./details.component.scss']
+  styleUrls: ['./details.component.scss'],
+  animations: [
+    trigger('expandCollapseAnimation', [
+      state('void', style({ height: '0px', opacity: 0, overflow: 'hidden' })),
+      state('*', style({ height: '*', opacity: 1 })),
+      transition('void => *', [
+        animate('300ms ease-out')
+      ]),
+      transition('* => void', [
+        animate('300ms ease-in')
+      ])
+    ])
+  ]
 })
 export class DetailsComponent implements OnInit {
   pap: string;
