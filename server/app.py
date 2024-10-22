@@ -171,6 +171,30 @@ def get_other_properties_for_pap(pap):
         return jsonify(result), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+@app.route('/api/paps/<pap>/integration_servers', methods=['GET'])
+def get_integration_servers_for_pap(pap):
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+
+        # Fetch integration servers related to the given PAP
+        cursor.execute("""
+            SELECT * 
+            FROM INTEGRATION_SERVERS 
+            WHERE SERVER_ID IN (
+                SELECT SERVER_ID 
+                FROM PAP_INTEGRATION_SERVERS 
+                WHERE PAP_ID = (SELECT PAP_ID FROM PAPS WHERE PAP_NAME = ?)
+            )
+        """, (pap,))
+        integration_servers = cursor.fetchall()
+
+        result = [dict(row) for row in integration_servers]
+
+        conn.close()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
