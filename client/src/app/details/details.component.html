@@ -90,4 +90,29 @@
 
     </div>
   </section>
+  <!-- Webservices Section -->
+<section>
+  <h2 (click)="expandedWebservicesSection = !expandedWebservicesSection" class="section-header">
+    Webservices
+    <span *ngIf="expandedWebservicesSection">[-]</span>
+    <span *ngIf="!expandedWebservicesSection">[+]</span>
+  </h2>
+
+  <div *ngIf="expandedWebservicesSection" [@expandCollapseAnimation]>
+    <div *ngIf="webservices.length > 0">
+      <div *ngFor="let service of webservices" class="webservice-entry">
+        <ul>
+          <li *ngFor="let key of objectKeys(service)">
+            <strong>{{ key }}:</strong> {{ service[key] }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- No Webservices Found -->
+    <div *ngIf="webservices.length === 0">
+      <p>No Webservices found for this PAP.</p>
+    </div>
+  </div>
+</section>
 </div>
