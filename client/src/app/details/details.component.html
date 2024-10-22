@@ -115,6 +115,31 @@
     </div>
   </div>
 </section>
+  <!-- Integration Servers Section -->
+<section>
+  <h2 (click)="expandedIntegrationServersSection = !expandedIntegrationServersSection" class="section-header">
+    Integration Servers
+    <span *ngIf="expandedIntegrationServersSection">[-]</span>
+    <span *ngIf="!expandedIntegrationServersSection">[+]</span>
+  </h2>
+
+  <div *ngIf="expandedIntegrationServersSection" [@expandCollapseAnimation]>
+    <div *ngIf="integrationServers.length > 0">
+      <div *ngFor="let server of integrationServers" class="integration-server-entry">
+        <ul>
+          <li *ngFor="let key of objectKeys(server)">
+            <strong>{{ key }}:</strong> {{ server[key] }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- No Integration Servers Found -->
+    <div *ngIf="integrationServers.length === 0">
+      <p>No Integration Servers found for this PAP.</p>
+    </div>
+  </div>
+</section>
   <!-- Other Properties Section -->
 <section>
   <h2 (click)="expandedOtherPropertiesSection = !expandedOtherPropertiesSection" class="section-header">
