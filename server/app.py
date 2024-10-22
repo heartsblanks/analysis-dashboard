@@ -147,6 +147,30 @@ def get_webservices_for_pap(pap):
         return jsonify(result), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+@app.route('/api/paps/<pap>/other_properties', methods=['GET'])
+def get_other_properties_for_pap(pap):
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+
+        # Fetch other properties related to the given PAP
+        cursor.execute("""
+            SELECT * 
+            FROM OTHER_PROPERTIES 
+            WHERE PROPERTY_FILE_ID IN (
+                SELECT FILE_ID 
+                FROM PROPERTY_FILES 
+                WHERE PAP_ID = (SELECT PAP_ID FROM PAPS WHERE PAP_NAME = ?)
+            )
+        """, (pap,))
+        other_properties = cursor.fetchall()
+
+        result = [dict(row) for row in other_properties]
+
+        conn.close()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
