@@ -97,27 +97,26 @@ def get_uembd_entries_for_pap(pap):
         # Convert the PF numbers into a format for SQL's IN clause
         pf_number_placeholders = ','.join(['?'] * len(pf_numbers))
 
-        # Step 2: Fetch UEMBD02T entries related to the PF numbers
+        # Step 2: Fetch all columns from UEMBD02T, UEMBD20T, UEMBD21T
         cursor.execute(f"""
             SELECT * FROM UEMBD02T
             WHERE PROCESS_ID IN ({pf_number_placeholders})
         """, pf_numbers)
         uembd02_entries = cursor.fetchall()
 
-        # Step 3: Fetch UEMBD20T entries related to the PF numbers
         cursor.execute(f"""
             SELECT * FROM UEMBD20T
             WHERE PROCESS_ID IN ({pf_number_placeholders})
         """, pf_numbers)
         uembd20_entries = cursor.fetchall()
 
-        # Step 4: Fetch UEMBD21T entries related to the PF numbers
         cursor.execute(f"""
             SELECT * FROM UEMBD21T
             WHERE PROCESS_ID IN ({pf_number_placeholders})
         """, pf_numbers)
         uembd21_entries = cursor.fetchall()
 
+        # Organize results
         result = {
             'uembd02t': [dict(row) for row in uembd02_entries],
             'uembd20t': [dict(row) for row in uembd20_entries],
