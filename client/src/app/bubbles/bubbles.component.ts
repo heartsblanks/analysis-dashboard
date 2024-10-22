@@ -10,7 +10,7 @@ import * as d3 from 'd3';
 })
 export class BubblesComponent implements OnInit {
   paps: any[] = [];  // Store PAP data
-  filteredPaps: any[] = [];
+  filteredPaps: any[] = [];  // Store filtered PAPs
   svg: any;
   width: number;
   height: number;
@@ -50,30 +50,10 @@ export class BubblesComponent implements OnInit {
       .domain([1, d3.max(data, d => d.count)])
       .range([20, 60]);
 
-    const defs = this.svg.append("defs");
-
-    const gradient = defs.append("radialGradient")
-      .attr("id", "bubbleGradient")
-      .attr("cx", "50%")
-      .attr("cy", "50%")
-      .attr("r", "50%");
-
-    gradient.append("stop")
-      .attr("offset", "0%")
-      .attr("stop-color", "#ffffff")
-      .attr("stop-opacity", 0.8);
-
-    gradient.append("stop")
-      .attr("offset", "100%")
-      .attr("stop-color", "#1f77b4")
-      .attr("stop-opacity", 1);
-
     this.simulation = d3.forceSimulation(data)
       .force("charge", d3.forceManyBody().strength(-15))
       .force("center", d3.forceCenter(this.width / 2, this.height / 2))
       .force("collision", d3.forceCollide().radius(d => this.radiusScale(d.count) + 5).strength(1))
-      .force("x", d3.forceX(this.width / 2).strength(0.1))
-      .force("y", d3.forceY(this.height / 2).strength(0.1))
       .on("tick", () => this.ticked());
 
     this.bubbles = this.svg.selectAll(".bubble")
@@ -90,7 +70,7 @@ export class BubblesComponent implements OnInit {
       .attr("dy", ".3em")
       .text(d => d.A);
 
-    this.bubbles.on("click", (event, d) => this.onBubbleClick(d)); // <-- Add click event listener
+    this.bubbles.on("click", (event, d) => this.onBubbleClick(d));
   }
 
   ticked() {
@@ -103,8 +83,41 @@ export class BubblesComponent implements OnInit {
 
   // Navigate to details page when a PAP bubble is clicked
   onBubbleClick(d) {
-    // Use the router to navigate to the details page with the clicked PAP
-    this.router.navigate(['/details', d.A]);  // <-- Navigate to /details/PAP_NAME
+    this.router.navigate(['/details', d.A]);  // Navigate to /details/PAP_NAME
+  }
+
+  // Handle filter input change
+  onFilterChange(event: any) {
+    const searchTerm = event.target.value.toLowerCase();
+    // Filter the PAPs based on the search term
+    this.filteredPaps = this.paps.filter(pap => pap.A.toLowerCase().includes(searchTerm));
+    // Update the bubbles with the filtered PAPs
+    this.updateBubbles(this.filteredPaps);
+  }
+
+  // Update bubbles based on the filtered PAPs
+  updateBubbles(filteredData: any[]) {
+    this.svg.selectAll(".bubble").remove();  // Remove the old bubbles
+
+    this.simulation.nodes(filteredData)
+      .force("center", d3.forceCenter(this.width / 2, this.height / 2))
+      .alpha(1).restart();
+
+    this.bubbles = this.svg.selectAll(".bubble")
+      .data(filteredData)
+      .enter().append("g")
+      .attr("class", "bubble");
+
+    this.bubbles.append("circle")
+      .attr("r", d => this.radiusScale(d.count))
+      .attr("fill", "url(#bubbleGradient)");
+
+    this.bubbles.append("text")
+      .attr("class", "bubble-text")
+      .attr("dy", ".3em")
+      .text(d => d.A);
+
+    this.bubbles.on("click", (event, d) => this.onBubbleClick(d));
   }
 
   @HostListener('window:resize', ['$event'])
