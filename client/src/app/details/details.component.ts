@@ -31,6 +31,9 @@ export class DetailsComponent implements OnInit {
   expandedWebservicesSection: boolean = false;  // Track the expanded/collapsed state for the webservices section
   otherProperties: any[] = [];  // Store other properties data
   expandedOtherPropertiesSection: boolean = false;  // Track the expanded/collapsed state for the other properties section
+  
+  integrationServers: any[] = [];  // Store integration servers data
+  expandedIntegrationServersSection: boolean = false;  // Track the expanded/collapsed state for the integration servers section
 
 
 
@@ -42,6 +45,7 @@ export class DetailsComponent implements OnInit {
   this.loadUembdEntries();  // Load UEMBD entries
   this.loadWebservices();  // Load Webservices
   this.loadOtherProperties();  // Load Other Properties
+  this.loadIntegrationServers();  // Load Integration Servers
 }
 
   // Method to load queues
@@ -69,6 +73,15 @@ loadWebservices() {
     this.webservices = data;
   }, error => {
     console.error('Error loading webservices:', error);
+  });
+}
+
+// Load Integration Servers
+loadIntegrationServers() {
+  this.http.get<any[]>(`/api/paps/${this.pap}/integration_servers`).subscribe(data => {
+    this.integrationServers = data;
+  }, error => {
+    console.error('Error loading integration servers:', error);
   });
 }
 
