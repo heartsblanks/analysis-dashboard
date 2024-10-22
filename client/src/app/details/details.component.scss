@@ -1,17 +1,25 @@
-.pap-details {
-  padding: 20px;
+.queue-section {
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
 }
 
-h1 {
-  font-size: 24px;
-  color: #333;
+.queue-attributes ul {
+  list-style-type: none;
+  padding-left: 0;
 }
 
-section {
-  margin-top: 20px;
+.queue-attributes li {
+  margin-bottom: 5px;
 }
 
-h2 {
-  font-size: 20px;
-  color: #1f77b4;
+.target-queue {
+  padding: 10px;
+  background-color: #e3f2fd;
+  margin-top: 10px;
+}
+
+.target-queue h4 {
+  margin-bottom: 5px;
 }
