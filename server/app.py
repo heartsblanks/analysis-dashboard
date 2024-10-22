@@ -47,29 +47,28 @@ def get_queues_for_pap(pap):
                 'definitions': [{'type': d['TYPE'], 'attribute_key': d['ATTRIBUTE_KEY'], 'attribute_value': d['ATTRIBUTE_VALUE']} for d in definitions]
             }
 
-            # Step 3: Check if the queue has a target queue and fetch its details
-            # (Assuming target queue details are stored in the QUEUE_DEFINITIONS table under a specific attribute)
-            cursor.execute("""
-                SELECT d.NAME AS target_queue, a.ATTRIBUTE_KEY, a.ATTRIBUTE_VALUE
-                FROM QUEUE_DEFINITIONS d
-                LEFT JOIN ATTRIBUTES a ON d.DEFINITION_ID = a.DEFINITION_ID
-                WHERE d.NAME = (
-                    SELECT a.ATTRIBUTE_VALUE
-                    FROM ATTRIBUTES a
-                    WHERE a.DEFINITION_ID = (SELECT d.DEFINITION_ID FROM QUEUE_DEFINITIONS d WHERE d.NAME = ?)
-                    AND a.ATTRIBUTE_KEY = 'target'
-                )
-            """, (queue_name,))
-            target_queue = cursor.fetchone()
+            # Step 3: Check if the queue has a target queue attribute
+            target_queue_name = None
+            for d in definitions:
+                if d['ATTRIBUTE_KEY'] == 'target':
+                    target_queue_name = d['ATTRIBUTE_VALUE']
 
-            if target_queue:
-                queue_details['target_queue'] = {
-                    'queue_name': target_queue['target_queue'],
-                    'attributes': {
-                        'attribute_key': target_queue['ATTRIBUTE_KEY'],
-                        'attribute_value': target_queue['ATTRIBUTE_VALUE']
+            # Step 4: If target queue exists, fetch its attributes
+            if target_queue_name:
+                cursor.execute("""
+                    SELECT d.NAME, a.ATTRIBUTE_KEY, a.ATTRIBUTE_VALUE
+                    FROM QUEUE_DEFINITIONS d
+                    LEFT JOIN ATTRIBUTES a ON d.DEFINITION_ID = a.DEFINITION_ID
+                    WHERE d.NAME = ?
+                """, (target_queue_name,))
+                target_definitions = cursor.fetchall()
+
+                # Add target queue details to the main queue details
+                if target_definitions:
+                    queue_details['target_queue'] = {
+                        'queue_name': target_queue_name,
+                        'attributes': [{'attribute_key': td['ATTRIBUTE_KEY'], 'attribute_value': td['ATTRIBUTE_VALUE']} for td in target_definitions]
                     }
-                }
 
             results.append(queue_details)
 
