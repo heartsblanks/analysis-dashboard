@@ -14,17 +14,15 @@ def get_queues_for_pap(pap):
         conn = connect_db()
         cursor = conn.cursor()
 
-        # Get all queues associated with the given PAP
+        # Fetch queues by joining PAP_QUEUES, QUEUES, and PAPS based on PAP_ID and QUEUE_ID
         cursor.execute("""
-            SELECT q.QUEUE_NAME, q.QUEUE_TYPE, q.QUEUE_ID, d.TYPE, d.NAME, a.ATTRIBUTE_KEY, a.ATTRIBUTE_VALUE
-            FROM QUEUES q
+            SELECT q.QUEUE_NAME, q.QUEUE_TYPE, d.TYPE, d.NAME, a.ATTRIBUTE_KEY, a.ATTRIBUTE_VALUE
+            FROM PAPS p
+            JOIN PAP_QUEUES pq ON p.PAP_ID = pq.PAP_ID
+            JOIN QUEUES q ON pq.QUEUE_ID = q.QUEUE_ID
             LEFT JOIN QUEUE_DEFINITIONS d ON q.QUEUE_ID = d.DEFINITION_ID
             LEFT JOIN ATTRIBUTES a ON d.DEFINITION_ID = a.DEFINITION_ID
-            WHERE q.QUEUE_NAME IN (
-                SELECT QUEUE_NAME FROM PAPS p
-                JOIN PAP_QUEUES pq ON p.PAP_ID = pq.PAP_ID
-                WHERE p.PAP_NAME = ?
-            )
+            WHERE p.PAP_NAME = ?
         """, (pap,))
 
         queues = cursor.fetchall()
