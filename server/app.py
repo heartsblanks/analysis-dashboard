@@ -77,56 +77,6 @@ def get_queues_for_pap(pap):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/paps/<pap>/uembd_entries', methods=['GET'])
-def get_uembd_entries_for_pap(pap):
-    try:
-        conn = connect_db()
-        cursor = conn.cursor()
-
-        # Step 1: Get PF numbers associated with the given PAP
-        cursor.execute("""
-            SELECT PF_NUMBER 
-            FROM PFNUMBERS 
-            WHERE PAP_ID = (SELECT PAP_ID FROM PAPS WHERE PAP_NAME = ?)
-        """, (pap,))
-        pf_numbers = [row['PF_NUMBER'] for row in cursor.fetchall()]
-
-        if not pf_numbers:
-            return jsonify({'error': 'No PF numbers found for the specified PAP'}), 404
-
-        # Convert the PF numbers into a format for SQL's IN clause
-        pf_number_placeholders = ','.join(['?'] * len(pf_numbers))
-
-        # Step 2: Fetch all columns from UEMBD02T, UEMBD20T, UEMBD21T
-        cursor.execute(f"""
-            SELECT * FROM UEMBD02T
-            WHERE PROCESS_ID IN ({pf_number_placeholders})
-        """, pf_numbers)
-        uembd02_entries = cursor.fetchall()
-
-        cursor.execute(f"""
-            SELECT * FROM UEMBD20T
-            WHERE PROCESS_ID IN ({pf_number_placeholders})
-        """, pf_numbers)
-        uembd20_entries = cursor.fetchall()
-
-        cursor.execute(f"""
-            SELECT * FROM UEMBD21T
-            WHERE PROCESS_ID IN ({pf_number_placeholders})
-        """, pf_numbers)
-        uembd21_entries = cursor.fetchall()
-
-        # Organize results
-        result = {
-            'uembd02t': [dict(row) for row in uembd02_entries],
-            'uembd20t': [dict(row) for row in uembd20_entries],
-            'uembd21t': [dict(row) for row in uembd21_entries]
-        }
-
-        conn.close()
-        return jsonify(result), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 @app.route('/api/paps/<pap>/webservices', methods=['GET'])
 def get_webservices_for_pap(pap):
     try:
