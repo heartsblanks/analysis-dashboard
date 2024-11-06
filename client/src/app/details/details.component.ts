@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { trigger, state, style, animate, transition } from '@angular/animations';
+import { interval, Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-details',
@@ -22,6 +24,8 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 })
 export class DetailsComponent implements OnInit {
   pap: string;
+  loading: boolean = true;
+  private pollingSubscription: Subscription | null = null;
   queues: any[] = [];
   uembdEntries: any = { uembd02t: [], uembd20t: [], uembd21t: [] };  // Store UEMBD entries
   expandedQueues: boolean[] = [];  // Track expanded/collapsed state of individual queues
@@ -42,16 +46,62 @@ export class DetailsComponent implements OnInit {
 
 
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
-
   ngOnInit() {
-  this.pap = this.route.snapshot.paramMap.get('pap');
-  this.loadQueues();
-  this.loadUembdEntries();  // Load UEMBD entries
-  this.loadWebservices();  // Load Webservices
-  this.loadOtherProperties();  // Load Other Properties
-  this.loadIntegrationServers();  // Load Integration Servers
-  this.loadDatabases();  // Load Databases, Operations, and Tables
-}
+    this.pap = this.route.snapshot.paramMap.get('pap');
+  }
+
+  ngOnDestroy() {
+    this.stopPolling();  // Stop polling when component is destroyed
+  }
+  // Method to initiate data population and start polling
+  populateAndLoadData() {
+    this.loading = true;
+
+    // Call the Flask API to start data population
+    this.http.get(`/api/populate_data`).subscribe({
+      next: () => {
+        // Start polling every 2 seconds to check status
+        this.pollingSubscription = interval(2000).subscribe(() => {
+          this.checkPopulationStatus();
+        });
+      },
+      error: (error) => {
+        console.error('Error populating data:', error);
+        this.loading = false;
+      }
+    });
+  }
+
+  // Method to check population status
+  checkPopulationStatus() {
+    this.http.get<any>('/api/population_status').subscribe(status => {
+      if (status.completed) {
+        // If population is complete, stop polling and load data
+        this.reloadData();
+        this.stopPolling();
+      }
+    });
+  }
+
+  // Stop polling for status updates
+  stopPolling() {
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+      this.pollingSubscription = null;
+    }
+  }
+
+  // Reloads all data sections after population completes
+  reloadData() {
+    this.loadQueues();
+    this.loadUembdEntries();
+    this.loadWebservices();
+    this.loadOtherProperties();
+    this.loadIntegrationServers();
+    this.loadDatabases();
+    this.loading = false;  // Hide loading indicators after data is loaded
+  }
+  
 
   // Method to load queues
   loadQueues() {
