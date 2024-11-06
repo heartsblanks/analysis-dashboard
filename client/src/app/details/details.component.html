@@ -1,6 +1,21 @@
 <div class="pap-details">
   <h1 class="title">PAP: {{ pap }}</h1>
+  <!-- Populate Data Button -->
+  <button (click)="populateAndLoadData()">Populate Missing Data</button>
 
+  <!-- Loading Journey Animation (shown while loading is true) -->
+  <div *ngIf="loading" class="loading-journey">
+    <span class="bubble"></span>
+    <span class="bubble"></span>
+    <span class="bubble"></span>
+  </div>
+
+  <!-- Skeleton Loading Placeholders (shown while loading is true) -->
+  <div *ngIf="loading" class="skeleton-container">
+    <div class="skeleton-header"></div>
+    <div class="skeleton-content"></div>
+    <div class="skeleton-content"></div>
+  </div>
   <section>
   <h2 (click)="toggleQueues()" class="section-header">
     Queues
