@@ -2,7 +2,31 @@ from flask import Flask, jsonify, request
 import sqlite3
 
 app = Flask(__name__)
+# Global variable to track the status of data population
+population_status = {"in_progress": False, "completed": False}
 
+@app.route('/api/populate_data', methods=['GET'])
+def populate_data():
+    global population_status
+    # Start data population in a separate thread
+    population_status["in_progress"] = True
+    population_status["completed"] = False
+    thread = Thread(target=populate_missing_data_in_db)
+    thread.start()
+    return jsonify({"message": "Data population started"}), 200
+
+@app.route('/api/population_status', methods=['GET'])
+def population_status():
+    # Return the current status of data population
+    return jsonify(population_status), 200
+
+def populate_missing_data_in_db():
+    global population_status
+    # Simulated data population process
+    time.sleep(5)  # Simulate delay for data population
+    # Update status to completed
+    population_status["in_progress"] = False
+    population_status["completed"] = True
 def connect_db():
     conn = sqlite3.connect('database.db')
     conn.row_factory = sqlite3.Row  # Enable named columns
