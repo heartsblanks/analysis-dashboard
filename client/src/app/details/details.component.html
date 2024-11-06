@@ -1,224 +1,216 @@
 <div class="pap-details">
   <h1 class="title">PAP: {{ pap }}</h1>
-  <!-- Populate Data Button -->
-  <button (click)="populateAndLoadData()">Populate Missing Data</button>
 
-  <!-- Loading Journey Animation (shown while loading is true) -->
+  <!-- Styled Populate Data Button -->
+  <button class="populate-button" (click)="populateAndLoadData()">Populate Missing Data</button>
+
+  <!-- Loading Journey Animation (Shown While Loading is True) -->
   <div *ngIf="loading" class="loading-journey">
     <span class="bubble"></span>
     <span class="bubble"></span>
     <span class="bubble"></span>
   </div>
 
-  <!-- Skeleton Loading Placeholders (shown while loading is true) -->
+  <!-- Skeleton Loading Placeholders (Shown While Loading is True) -->
   <div *ngIf="loading" class="skeleton-container">
     <div class="skeleton-header"></div>
     <div class="skeleton-content"></div>
     <div class="skeleton-content"></div>
   </div>
-  <section>
-  <h2 (click)="toggleQueues()" class="section-header">
-    Queues
-    <span *ngIf="expandedQueuesSection">[-]</span>
-    <span *ngIf="!expandedQueuesSection">[+]</span>
-  </h2>
 
-  <!-- If the queues section is expanded -->
-  <div *ngIf="expandedQueuesSection" [@expandCollapseAnimation]>
-    <!-- Display the queues if available -->
-    <div *ngIf="queues.length > 0">
-      <div *ngFor="let queue of queues; let i = index" class="queue-item">
-        <!-- Queue name is clickable to expand/collapse queue details -->
-        <h3 (click)="toggleQueue(i)" class="queue-header">
-          {{ queue.queue_name }}
-          <span *ngIf="expandedQueues[i]">[-]</span>
-          <span *ngIf="!expandedQueues[i]">[+]</span>
-        </h3>
+  <!-- Actual Data Display with Final Reveal Animation (Shown When Loading is False) -->
+  <div *ngIf="!loading" class="final-reveal">
 
-        <!-- Queue details shown if expanded -->
-        <div *ngIf="expandedQueues[i]" class="queue-details" [@expandCollapseAnimation]>
-          <p><strong>Queue Type:</strong> {{ queue.queue_type }}</p>
+    <!-- Queues Section -->
+    <section>
+      <h2 (click)="toggleQueues()" class="section-header">
+        Queues
+        <span *ngIf="expandedQueuesSection">[-]</span>
+        <span *ngIf="!expandedQueuesSection">[+]</span>
+      </h2>
+      
+      <div *ngIf="expandedQueuesSection" [@expandCollapseAnimation]>
+        <div *ngIf="queues.length > 0">
+          <div *ngFor="let queue of queues; let i = index" class="queue-item">
+            <h3 (click)="toggleQueue(i)" class="queue-header">
+              {{ queue.queue_name }}
+              <span *ngIf="expandedQueues[i]">[-]</span>
+              <span *ngIf="!expandedQueues[i]">[+]</span>
+            </h3>
+
+            <div *ngIf="expandedQueues[i]" class="queue-details" [@expandCollapseAnimation]>
+              <p><strong>Queue Type:</strong> {{ queue.queue_type }}</p>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="queues.length === 0">
+          <p>No queues found for this PAP.</p>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Display if no queues are found -->
-    <div *ngIf="queues.length === 0">
-      <p>No queues found for this PAP.</p>
-    </div>
-  </div>
-</section>
-<!-- UEMBD Entries Section -->
-  <section>
-    <h2 (click)="toggleUembdSection()" class="section-header">
-      UEMBD* Entries
-      <span *ngIf="expandedUembdSection">[-]</span>
-      <span *ngIf="!expandedUembdSection">[+]</span>
-    </h2>
+    <!-- UEMBD Entries Section -->
+    <section>
+      <h2 (click)="toggleUembdSection()" class="section-header">
+        UEMBD* Entries
+        <span *ngIf="expandedUembdSection">[-]</span>
+        <span *ngIf="!expandedUembdSection">[+]</span>
+      </h2>
 
-    <div *ngIf="expandedUembdSection" [@expandCollapseAnimation]>
+      <div *ngIf="expandedUembdSection" [@expandCollapseAnimation]>
+        <h3>UEMBD02T Entries</h3>
+        <div *ngIf="uembdEntries.uembd02t.length > 0">
+          <div *ngFor="let entry of uembdEntries.uembd02t" class="uembd-entry">
+            <ul>
+              <li *ngFor="let key of objectKeys(entry)">
+                <strong>{{ key }}:</strong> {{ entry[key] }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="uembdEntries.uembd02t.length === 0">
+          <p>No UEMBD02T entries found.</p>
+        </div>
 
-      <!-- UEMBD02T Entries -->
-      <h3>UEMBD02T Entries</h3>
-      <div *ngIf="uembdEntries.uembd02t.length > 0">
-        <div *ngFor="let entry of uembdEntries.uembd02t" class="uembd-entry">
-          <ul>
-            <li *ngFor="let key of objectKeys(entry)">
-              <strong>{{ key }}:</strong> {{ entry[key] }}
-            </li>
-          </ul>
+        <!-- Other UEMBD Sections (20T, 21T) similarly structured -->
+        <h3>UEMBD20T Entries</h3>
+        <div *ngIf="uembdEntries.uembd20t.length > 0">
+          <div *ngFor="let entry of uembdEntries.uembd20t" class="uembd-entry">
+            <ul>
+              <li *ngFor="let key of objectKeys(entry)">
+                <strong>{{ key }}:</strong> {{ entry[key] }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="uembdEntries.uembd20t.length === 0">
+          <p>No UEMBD20T entries found.</p>
+        </div>
+
+        <h3>UEMBD21T Entries</h3>
+        <div *ngIf="uembdEntries.uembd21t.length > 0">
+          <div *ngFor="let entry of uembdEntries.uembd21t" class="uembd-entry">
+            <ul>
+              <li *ngFor="let key of objectKeys(entry)">
+                <strong>{{ key }}:</strong> {{ entry[key] }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="uembdEntries.uembd21t.length === 0">
+          <p>No UEMBD21T entries found.</p>
         </div>
       </div>
-      <div *ngIf="uembdEntries.uembd02t.length === 0">
-        <p>No UEMBD02T entries found.</p>
-      </div>
+    </section>
 
-      <!-- UEMBD20T Entries -->
-      <h3>UEMBD20T Entries</h3>
-      <div *ngIf="uembdEntries.uembd20t.length > 0">
-        <div *ngFor="let entry of uembdEntries.uembd20t" class="uembd-entry">
-          <ul>
-            <li *ngFor="let key of objectKeys(entry)">
-              <strong>{{ key }}:</strong> {{ entry[key] }}
-            </li>
-          </ul>
+    <!-- Databases, Operations, and Tables Section -->
+    <section>
+      <h2 (click)="expandedDatabasesSection = !expandedDatabasesSection" class="section-header">
+        Databases, Operations, and Tables
+        <span *ngIf="expandedDatabasesSection">[-]</span>
+        <span *ngIf="!expandedDatabasesSection">[+]</span>
+      </h2>
+
+      <div *ngIf="expandedDatabasesSection" [@expandCollapseAnimation]>
+        <h3>Databases by Environment</h3>
+        <div *ngIf="databases.length > 0">
+          <div *ngFor="let database of databases" class="database-entry">
+            <ul>
+              <li><strong>Database Name:</strong> {{ database.DB_NAME }}</li>
+              <li><strong>Environment:</strong> {{ database.ENVIRONMENT }}</li>
+              <li><strong>Value:</strong> {{ database.VALUE }}</li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="databases.length === 0">
+          <p>No databases found for this PAP.</p>
+        </div>
+
+        <h3>Operations and Tables</h3>
+        <div *ngIf="operationsAndTables.length > 0">
+          <div *ngFor="let op of operationsAndTables" class="operation-entry">
+            <ul>
+              <li><strong>Operation Type:</strong> {{ op.OPERATION_TYPE }}</li>
+              <li><strong>Table Name:</strong> {{ op.TABLE_NAME }}</li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="operationsAndTables.length === 0">
+          <p>No operations or tables found for this PAP.</p>
         </div>
       </div>
-      <div *ngIf="uembdEntries.uembd20t.length === 0">
-        <p>No UEMBD20T entries found.</p>
-      </div>
+    </section>
 
-      <!-- UEMBD21T Entries -->
-      <h3>UEMBD21T Entries</h3>
-      <div *ngIf="uembdEntries.uembd21t.length > 0">
-        <div *ngFor="let entry of uembdEntries.uembd21t" class="uembd-entry">
-          <ul>
-            <li *ngFor="let key of objectKeys(entry)">
-              <strong>{{ key }}:</strong> {{ entry[key] }}
-            </li>
-          </ul>
+    <!-- Webservices Section -->
+    <section>
+      <h2 (click)="expandedWebservicesSection = !expandedWebservicesSection" class="section-header">
+        Webservices
+        <span *ngIf="expandedWebservicesSection">[-]</span>
+        <span *ngIf="!expandedWebservicesSection">[+]</span>
+      </h2>
+
+      <div *ngIf="expandedWebservicesSection" [@expandCollapseAnimation]>
+        <div *ngIf="webservices.length > 0">
+          <div *ngFor="let service of webservices" class="webservice-entry">
+            <ul>
+              <li *ngFor="let key of objectKeys(service)">
+                <strong>{{ key }}:</strong> {{ service[key] }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="webservices.length === 0">
+          <p>No Webservices found for this PAP.</p>
         </div>
       </div>
-      <div *ngIf="uembdEntries.uembd21t.length === 0">
-        <p>No UEMBD21T entries found.</p>
+    </section>
+
+    <!-- Integration Servers Section -->
+    <section>
+      <h2 (click)="expandedIntegrationServersSection = !expandedIntegrationServersSection" class="section-header">
+        Integration Servers
+        <span *ngIf="expandedIntegrationServersSection">[-]</span>
+        <span *ngIf="!expandedIntegrationServersSection">[+]</span>
+      </h2>
+
+      <div *ngIf="expandedIntegrationServersSection" [@expandCollapseAnimation]>
+        <div *ngIf="integrationServers.length > 0">
+          <div *ngFor="let server of integrationServers" class="integration-server-entry">
+            <ul>
+              <li *ngFor="let key of objectKeys(server)">
+                <strong>{{ key }}:</strong> {{ server[key] }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="integrationServers.length === 0">
+          <p>No Integration Servers found for this PAP.</p>
+        </div>
       </div>
+    </section>
 
-    </div>
-  </section>
-  <!-- Databases, Operations, and Tables Section -->
-<section>
-  <h2 (click)="expandedDatabasesSection = !expandedDatabasesSection" class="section-header">
-    Databases, Operations, and Tables
-    <span *ngIf="expandedDatabasesSection">[-]</span>
-    <span *ngIf="!expandedDatabasesSection">[+]</span>
-  </h2>
+    <!-- Other Properties Section -->
+    <section>
+      <h2 (click)="expandedOtherPropertiesSection = !expandedOtherPropertiesSection" class="section-header">
+        Other Properties
+        <span *ngIf="expandedOtherPropertiesSection">[-]</span>
+        <span *ngIf="!expandedOtherPropertiesSection">[+]</span>
+      </h2>
 
-  <div *ngIf="expandedDatabasesSection" [@expandCollapseAnimation]>
-
-    <!-- Display Databases Grouped by Environment -->
-    <h3>Databases by Environment</h3>
-    <div *ngIf="databases.length > 0">
-      <div *ngFor="let database of databases" class="database-entry">
-        <ul>
-          <li><strong>Database Name:</strong> {{ database.DB_NAME }}</li>
-          <li><strong>Environment:</strong> {{ database.ENVIRONMENT }}</li>
-          <li><strong>Value:</strong> {{ database.VALUE }}</li>
-        </ul>
+      <div *ngIf="expandedOtherPropertiesSection" [@expandCollapseAnimation]>
+        <div *ngIf="otherProperties.length > 0">
+          <div *ngFor="let property of otherProperties" class="other-property-entry">
+            <ul>
+              <li *ngFor="let key of objectKeys(property)">
+                <strong>{{ key }}:</strong> {{ property[key] }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="otherProperties.length === 0">
+          <p>No Other Properties found for this PAP.</p>
+        </div>
       </div>
-    </div>
-    <div *ngIf="databases.length === 0">
-      <p>No databases found for this PAP.</p>
-    </div>
-
-    <!-- Display SQL Operations and Tables -->
-    <h3>Operations and Tables</h3>
-    <div *ngIf="operationsAndTables.length > 0">
-      <div *ngFor="let op of operationsAndTables" class="operation-entry">
-        <ul>
-          <li><strong>Operation Type:</strong> {{ op.OPERATION_TYPE }}</li>
-          <li><strong>Table Name:</strong> {{ op.TABLE_NAME }}</li>
-        </ul>
-      </div>
-    </div>
-    <div *ngIf="operationsAndTables.length === 0">
-      <p>No operations or tables found for this PAP.</p>
-    </div>
-
+    </section>
   </div>
-</section>
-  <!-- Webservices Section -->
-<section>
-  <h2 (click)="expandedWebservicesSection = !expandedWebservicesSection" class="section-header">
-    Webservices
-    <span *ngIf="expandedWebservicesSection">[-]</span>
-    <span *ngIf="!expandedWebservicesSection">[+]</span>
-  </h2>
-
-  <div *ngIf="expandedWebservicesSection" [@expandCollapseAnimation]>
-    <div *ngIf="webservices.length > 0">
-      <div *ngFor="let service of webservices" class="webservice-entry">
-        <ul>
-          <li *ngFor="let key of objectKeys(service)">
-            <strong>{{ key }}:</strong> {{ service[key] }}
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- No Webservices Found -->
-    <div *ngIf="webservices.length === 0">
-      <p>No Webservices found for this PAP.</p>
-    </div>
-  </div>
-</section>
-  <!-- Integration Servers Section -->
-<section>
-  <h2 (click)="expandedIntegrationServersSection = !expandedIntegrationServersSection" class="section-header">
-    Integration Servers
-    <span *ngIf="expandedIntegrationServersSection">[-]</span>
-    <span *ngIf="!expandedIntegrationServersSection">[+]</span>
-  </h2>
-
-  <div *ngIf="expandedIntegrationServersSection" [@expandCollapseAnimation]>
-    <div *ngIf="integrationServers.length > 0">
-      <div *ngFor="let server of integrationServers" class="integration-server-entry">
-        <ul>
-          <li *ngFor="let key of objectKeys(server)">
-            <strong>{{ key }}:</strong> {{ server[key] }}
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- No Integration Servers Found -->
-    <div *ngIf="integrationServers.length === 0">
-      <p>No Integration Servers found for this PAP.</p>
-    </div>
-  </div>
-</section>
-  <!-- Other Properties Section -->
-<section>
-  <h2 (click)="expandedOtherPropertiesSection = !expandedOtherPropertiesSection" class="section-header">
-    Other Properties
-    <span *ngIf="expandedOtherPropertiesSection">[-]</span>
-    <span *ngIf="!expandedOtherPropertiesSection">[+]</span>
-  </h2>
-
-  <div *ngIf="expandedOtherPropertiesSection" [@expandCollapseAnimation]>
-    <div *ngIf="otherProperties.length > 0">
-      <div *ngFor="let property of otherProperties" class="other-property-entry">
-        <ul>
-          <li *ngFor="let key of objectKeys(property)">
-            <strong>{{ key }}:</strong> {{ property[key] }}
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- No Other Properties Found -->
-    <div *ngIf="otherProperties.length === 0">
-      <p>No Other Properties found for this PAP.</p>
-    </div>
-  </div>
-</section>
 </div>
