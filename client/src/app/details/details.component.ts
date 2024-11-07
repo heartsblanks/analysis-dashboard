@@ -4,7 +4,11 @@ import { HttpClient } from '@angular/common/http';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { interval, Subscription } from 'rxjs';
 
-
+interface FileEntry {
+  name: string;
+  pdfUrl: string | null;
+  loading: boolean;
+}
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
@@ -41,6 +45,9 @@ export class DetailsComponent implements OnInit {
   databases: any[] = [];  // Store databases data
   operationsAndTables: any[] = [];  // Store operations and tables data
   expandedDatabasesSection: boolean = false;  // Track the expanded/collapsed state for the databases section
+  files: FileEntry[] = [];
+  expandedFileIndex: number | null = null;
+  expandedFilesSection: boolean = false;  // To manage the expanded state of the files section
 
 
 
@@ -48,6 +55,7 @@ export class DetailsComponent implements OnInit {
   constructor(private route: ActivatedRoute, private http: HttpClient) {}
   ngOnInit() {
     this.pap = this.route.snapshot.paramMap.get('pap');
+    this.loadFileList();
   }
 
   ngOnDestroy() {
@@ -177,5 +185,45 @@ loadOtherProperties() {
   // Helper method to get the keys of an object (for dynamic column names)
   objectKeys(obj: any): string[] {
     return Object.keys(obj);
+  }
+  // Load list of files for the PAP
+  loadFileList() {
+    this.http.get<{ files: string[] }>(`/api/pap_files?pap_id=${this.pap}`).subscribe({
+      next: (response) => {
+        this.files = response.files.map((fileName) => ({
+          name: fileName,
+          pdfUrl: null,
+          loading: false
+        }));
+      },
+      error: (error) => {
+        console.error('Error loading file list:', error);
+      }
+    });
+  }
+
+  toggleFileContent(index: number) {
+    if (this.expandedFileIndex === index) {
+      this.expandedFileIndex = null;  // Collapse if already expanded
+    } else {
+      this.expandedFileIndex = index;  // Expand new section
+
+      if (!this.files[index].pdfUrl) {
+        this.files[index].loading = true;  // Show loading state
+
+        this.http.get(`/api/file_pdf?file_name=${this.files[index].name}`, { responseType: 'blob' as 'json' })
+          .subscribe({
+            next: (response: Blob) => {
+              const pdfUrl = URL.createObjectURL(response);  // Convert Blob to a URL for iframe
+              this.files[index].pdfUrl = pdfUrl;
+              this.files[index].loading = false;
+            },
+            error: (error) => {
+              console.error('Error loading PDF file:', error);
+              this.files[index].loading = false;
+            }
+          });
+      }
+    }
   }
 }
