@@ -212,5 +212,34 @@
         </div>
       </div>
     </section>
+    <!-- Files Section -->
+<section>
+  <h2 (click)="expandedFilesSection = !expandedFilesSection" class="section-header">
+    Files
+    <span *ngIf="expandedFilesSection">[-]</span>
+    <span *ngIf="!expandedFilesSection">[+]</span>
+  </h2>
+
+  <div *ngIf="expandedFilesSection" [@expandCollapseAnimation]>
+    <div *ngIf="files.length > 0">
+      <div *ngFor="let file of files; let i = index" class="file-item">
+        <h3 (click)="toggleFileContent(i)" class="file-header">
+          {{ file.name }}
+          <span *ngIf="expandedFileIndex === i">[-]</span>
+          <span *ngIf="expandedFileIndex !== i">[+]</span>
+        </h3>
+
+        <!-- Display PDF content in an iframe if loaded -->
+        <div *ngIf="expandedFileIndex === i" class="file-content">
+          <div *ngIf="file.loading">Loading...</div>
+          <iframe *ngIf="!file.loading && file.pdfUrl" [src]="file.pdfUrl" width="100%" height="600px"></iframe>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="files.length === 0">
+      <p>No files available for this PAP.</p>
+    </div>
+  </div>
+</section>
   </div>
 </div>
