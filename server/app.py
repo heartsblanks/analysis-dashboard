@@ -1,10 +1,63 @@
-from flask import Flask, jsonify, request
-import sqlite3
+from flask import Flask, jsonify, request, send_file
+import os
+from comtypes.client import CreateObject  # For Windows PDF conversion
+from threading import Thread
+import time
 
 app = Flask(__name__)
 # Global variable to track the status of data population
 population_status = {"in_progress": False, "completed": False}
+# Create a temporary directory within the system's temp location
+TEMP_PDF_DIR = tempfile.mkdtemp()
+print(f"Temporary PDF directory created at {TEMP_PDF_DIR}")
 
+# Sample file paths dictionary
+file_paths = {
+    "example.docx": "/path/to/example.docx",
+    "example.pptx": "/path/to/example.pptx"
+}
+
+@app.route('/api/file_pdf', methods=['GET'])
+def get_file_pdf():
+    file_name = request.args.get("file_name")
+    file_path = file_paths.get(file_name)
+
+    if not file_path or not os.path.exists(file_path):
+        return jsonify({"error": "File not found"}), 404
+
+    # Convert the file to PDF and get the PDF path
+    pdf_path = convert_to_pdf(file_path)
+    if not pdf_path:
+        return jsonify({"error": "Failed to convert file to PDF"}), 500
+
+    # Serve the PDF file
+    return send_file(pdf_path, as_attachment=True, download_name=f"{file_name}.pdf")
+
+def convert_to_pdf(file_path):
+    """Converts a Word or PowerPoint file to PDF and returns the PDF path."""
+    file_name = os.path.basename(file_path)
+    pdf_path = os.path.join(TEMP_PDF_DIR, f"{file_name}.pdf")
+
+    try:
+        if file_path.endswith(".docx") or file_path.endswith(".doc"):
+            word = CreateObject("Word.Application")
+            doc = word.Documents.Open(file_path)
+            doc.SaveAs(pdf_path, FileFormat=17)  # 17 is the PDF format
+            doc.Close()
+            word.Quit()
+        elif file_path.endswith(".pptx") or file_path.endswith(".ppt"):
+            powerpoint = CreateObject("PowerPoint.Application")
+            presentation = powerpoint.Presentations.Open(file_path, WithWindow=False)
+            presentation.SaveAs(pdf_path, FileFormat=32)  # 32 is the PDF format
+            presentation.Close()
+            powerpoint.Quit()
+        else:
+            return None
+
+        return pdf_path if os.path.exists(pdf_path) else None
+    except Exception as e:
+        print(f"Error converting file to PDF: {e}")
+        return None
 @app.route('/api/populate_data', methods=['GET'])
 def populate_data():
     global population_status
@@ -205,6 +258,32 @@ def get_databases_for_pap(pap):
         return jsonify(result), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+@app.route('/api/pap_files', methods=['GET'])
+def get_pap_files():
+    pap_id = request.args.get("pap_id")
+
+    # Verify that the PAP ID is provided
+    if not pap_id:
+        return jsonify({"error": "PAP ID is required"}), 400
+
+    try:
+        conn = connect_db()
+        cursor = conn.cursor()
+
+        # Query to get file names associated with the PAP
+        cursor.execute("""
+            SELECT FILE_NAME 
+            FROM PROPERTY_FILES 
+            WHERE PAP_ID = (SELECT PAP_ID FROM PAPS WHERE PAP_NAME = ?)
+        """, (pap_id,))
+
+        files = cursor.fetchall()
+        file_names = [file["FILE_NAME"] for file in files]
+
+        conn.close()
+        return jsonify({"files": file_names}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
