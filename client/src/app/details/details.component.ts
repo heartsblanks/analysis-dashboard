@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { interval, Subscription } from 'rxjs';
+import { trigger, transition, style, animate } from '@angular/animations';
+
 
 interface FileEntry {
   name: string;
@@ -14,18 +16,17 @@ interface FileEntry {
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss'],
-  animations: [
-    trigger('expandCollapseAnimation', [
-      state('void', style({ height: '0px', opacity: 0, overflow: 'hidden' })),
-      state('*', style({ height: '*', opacity: 1 })),
-      transition('void => *', [
-        animate('300ms ease-out')
+   animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms', style({ opacity: 1 })),
       ]),
-      transition('* => void', [
-        animate('300ms ease-in')
-      ])
-    ])
-  ]
+      transition(':leave', [
+        animate('300ms', style({ opacity: 0 })),
+      ]),
+    ]),
+  ],
 })
 export class DetailsComponent implements OnInit, OnDestroy {
   pap: string;
