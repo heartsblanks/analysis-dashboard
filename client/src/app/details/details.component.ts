@@ -57,10 +57,49 @@ export class DetailsComponent implements OnInit, OnDestroy {
     this.stopPolling();
   }
 
-  // Method to switch tabs
-  selectTab(index: number) {
-    this.selectedTab = index;
+  // Modify selectTab to load data only when a tab is selected
+selectTab(index: number) {
+  this.selectedTab = index;
+
+  // Load data based on the selected tab, only if it hasn't been loaded before
+  switch (index) {
+    case 0:
+      if (!this.queues.length) {
+        this.loadQueues();
+      }
+      break;
+    case 1:
+      if (!this.uembdEntries.uembd02t.length && !this.uembdEntries.uembd20t.length && !this.uembdEntries.uembd21t.length) {
+        this.loadUembdEntries();
+      }
+      break;
+    case 2:
+      if (!this.databases.length && !this.operationsAndTables.length) {
+        this.loadDatabases();
+      }
+      break;
+    case 3:
+      if (!this.webservices.length) {
+        this.loadWebservices();
+      }
+      break;
+    case 4:
+      if (!this.integrationServers.length) {
+        this.loadIntegrationServers();
+      }
+      break;
+    case 5:
+      if (!this.otherProperties.length) {
+        this.loadOtherProperties();
+      }
+      break;
+    case 6:
+      if (!this.files.length) {
+        this.loadFileList();
+      }
+      break;
   }
+}
 
   populateAndLoadData() {
     this.loading = true;
