@@ -1,245 +1,53 @@
 <div class="pap-details">
   <h1 class="title">PAP: {{ pap }}</h1>
 
-  <!-- Styled Populate Data Button -->
+  <!-- Populate Data Button -->
   <button class="populate-button" (click)="populateAndLoadData()">Populate Missing Data</button>
 
-  <!-- Loading Journey Animation (Shown While Loading is True) -->
-  <div *ngIf="loading" class="loading-journey">
-    <span class="bubble"></span>
-    <span class="bubble"></span>
-    <span class="bubble"></span>
+  <!-- Tab Navigation -->
+  <div class="tabs">
+    <button *ngFor="let tab of tabs; let i = index"
+            (click)="selectTab(i)"
+            [class.active]="selectedTab === i">
+      {{ tab }}
+    </button>
   </div>
 
-  <!-- Skeleton Loading Placeholders (Shown While Loading is True) -->
-  <div *ngIf="loading" class="skeleton-container">
-    <div class="skeleton-header"></div>
-    <div class="skeleton-content"></div>
-    <div class="skeleton-content"></div>
-  </div>
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <ng-container *ngIf="selectedTab === 0">
+      <!-- Queues Section -->
+      <app-queues-section [queues]="queues" [loading]="loading"></app-queues-section>
+    </ng-container>
 
-  <!-- Actual Data Display with Final Reveal Animation (Shown When Loading is False) -->
-  <div *ngIf="!loading" class="final-reveal">
+    <ng-container *ngIf="selectedTab === 1">
+      <!-- UEMBD Section -->
+      <app-uembd-section [uembdEntries]="uembdEntries" [loading]="loading"></app-uembd-section>
+    </ng-container>
 
-    <!-- Queues Section -->
-    <section>
-      <h2 (click)="toggleQueues()" class="section-header">
-        Queues
-        <span *ngIf="expandedQueuesSection">[-]</span>
-        <span *ngIf="!expandedQueuesSection">[+]</span>
-      </h2>
-      
-      <div *ngIf="expandedQueuesSection" [@expandCollapseAnimation]>
-        <div *ngIf="queues.length > 0">
-          <div *ngFor="let queue of queues; let i = index" class="queue-item">
-            <h3 (click)="toggleQueue(i)" class="queue-header">
-              {{ queue.queue_name }}
-              <span *ngIf="expandedQueues[i]">[-]</span>
-              <span *ngIf="!expandedQueues[i]">[+]</span>
-            </h3>
+    <ng-container *ngIf="selectedTab === 2">
+      <!-- Databases Section -->
+      <app-databases-section [databases]="databases" [operationsAndTables]="operationsAndTables" [loading]="loading"></app-databases-section>
+    </ng-container>
 
-            <div *ngIf="expandedQueues[i]" class="queue-details" [@expandCollapseAnimation]>
-              <p><strong>Queue Type:</strong> {{ queue.queue_type }}</p>
-            </div>
-          </div>
-        </div>
-        <div *ngIf="queues.length === 0">
-          <p>No queues found for this PAP.</p>
-        </div>
-      </div>
-    </section>
+    <ng-container *ngIf="selectedTab === 3">
+      <!-- Webservices Section -->
+      <app-webservices-section [webservices]="webservices" [loading]="loading"></app-webservices-section>
+    </ng-container>
 
-    <!-- UEMBD Entries Section -->
-    <section>
-      <h2 (click)="toggleUembdSection()" class="section-header">
-        UEMBD* Entries
-        <span *ngIf="expandedUembdSection">[-]</span>
-        <span *ngIf="!expandedUembdSection">[+]</span>
-      </h2>
+    <ng-container *ngIf="selectedTab === 4">
+      <!-- Integration Servers Section -->
+      <app-integration-servers-section [integrationServers]="integrationServers" [loading]="loading"></app-integration-servers-section>
+    </ng-container>
 
-      <div *ngIf="expandedUembdSection" [@expandCollapseAnimation]>
-        <h3>UEMBD02T Entries</h3>
-        <div *ngIf="uembdEntries.uembd02t.length > 0">
-          <div *ngFor="let entry of uembdEntries.uembd02t" class="uembd-entry">
-            <ul>
-              <li *ngFor="let key of objectKeys(entry)">
-                <strong>{{ key }}:</strong> {{ entry[key] }}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div *ngIf="uembdEntries.uembd02t.length === 0">
-          <p>No UEMBD02T entries found.</p>
-        </div>
+    <ng-container *ngIf="selectedTab === 5">
+      <!-- Other Properties Section -->
+      <app-other-properties-section [otherProperties]="otherProperties" [loading]="loading"></app-other-properties-section>
+    </ng-container>
 
-        <!-- Other UEMBD Sections (20T, 21T) similarly structured -->
-        <h3>UEMBD20T Entries</h3>
-        <div *ngIf="uembdEntries.uembd20t.length > 0">
-          <div *ngFor="let entry of uembdEntries.uembd20t" class="uembd-entry">
-            <ul>
-              <li *ngFor="let key of objectKeys(entry)">
-                <strong>{{ key }}:</strong> {{ entry[key] }}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div *ngIf="uembdEntries.uembd20t.length === 0">
-          <p>No UEMBD20T entries found.</p>
-        </div>
-
-        <h3>UEMBD21T Entries</h3>
-        <div *ngIf="uembdEntries.uembd21t.length > 0">
-          <div *ngFor="let entry of uembdEntries.uembd21t" class="uembd-entry">
-            <ul>
-              <li *ngFor="let key of objectKeys(entry)">
-                <strong>{{ key }}:</strong> {{ entry[key] }}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div *ngIf="uembdEntries.uembd21t.length === 0">
-          <p>No UEMBD21T entries found.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Databases, Operations, and Tables Section -->
-    <section>
-      <h2 (click)="expandedDatabasesSection = !expandedDatabasesSection" class="section-header">
-        Databases, Operations, and Tables
-        <span *ngIf="expandedDatabasesSection">[-]</span>
-        <span *ngIf="!expandedDatabasesSection">[+]</span>
-      </h2>
-
-      <div *ngIf="expandedDatabasesSection" [@expandCollapseAnimation]>
-        <h3>Databases by Environment</h3>
-        <div *ngIf="databases.length > 0">
-          <div *ngFor="let database of databases" class="database-entry">
-            <ul>
-              <li><strong>Database Name:</strong> {{ database.DB_NAME }}</li>
-              <li><strong>Environment:</strong> {{ database.ENVIRONMENT }}</li>
-              <li><strong>Value:</strong> {{ database.VALUE }}</li>
-            </ul>
-          </div>
-        </div>
-        <div *ngIf="databases.length === 0">
-          <p>No databases found for this PAP.</p>
-        </div>
-
-        <h3>Operations and Tables</h3>
-        <div *ngIf="operationsAndTables.length > 0">
-          <div *ngFor="let op of operationsAndTables" class="operation-entry">
-            <ul>
-              <li><strong>Operation Type:</strong> {{ op.OPERATION_TYPE }}</li>
-              <li><strong>Table Name:</strong> {{ op.TABLE_NAME }}</li>
-            </ul>
-          </div>
-        </div>
-        <div *ngIf="operationsAndTables.length === 0">
-          <p>No operations or tables found for this PAP.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Webservices Section -->
-    <section>
-      <h2 (click)="expandedWebservicesSection = !expandedWebservicesSection" class="section-header">
-        Webservices
-        <span *ngIf="expandedWebservicesSection">[-]</span>
-        <span *ngIf="!expandedWebservicesSection">[+]</span>
-      </h2>
-
-      <div *ngIf="expandedWebservicesSection" [@expandCollapseAnimation]>
-        <div *ngIf="webservices.length > 0">
-          <div *ngFor="let service of webservices" class="webservice-entry">
-            <ul>
-              <li *ngFor="let key of objectKeys(service)">
-                <strong>{{ key }}:</strong> {{ service[key] }}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div *ngIf="webservices.length === 0">
-          <p>No Webservices found for this PAP.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Integration Servers Section -->
-    <section>
-      <h2 (click)="expandedIntegrationServersSection = !expandedIntegrationServersSection" class="section-header">
-        Integration Servers
-        <span *ngIf="expandedIntegrationServersSection">[-]</span>
-        <span *ngIf="!expandedIntegrationServersSection">[+]</span>
-      </h2>
-
-      <div *ngIf="expandedIntegrationServersSection" [@expandCollapseAnimation]>
-        <div *ngIf="integrationServers.length > 0">
-          <div *ngFor="let server of integrationServers" class="integration-server-entry">
-            <ul>
-              <li *ngFor="let key of objectKeys(server)">
-                <strong>{{ key }}:</strong> {{ server[key] }}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div *ngIf="integrationServers.length === 0">
-          <p>No Integration Servers found for this PAP.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Other Properties Section -->
-    <section>
-      <h2 (click)="expandedOtherPropertiesSection = !expandedOtherPropertiesSection" class="section-header">
-        Other Properties
-        <span *ngIf="expandedOtherPropertiesSection">[-]</span>
-        <span *ngIf="!expandedOtherPropertiesSection">[+]</span>
-      </h2>
-
-      <div *ngIf="expandedOtherPropertiesSection" [@expandCollapseAnimation]>
-        <div *ngIf="otherProperties.length > 0">
-          <div *ngFor="let property of otherProperties" class="other-property-entry">
-            <ul>
-              <li *ngFor="let key of objectKeys(property)">
-                <strong>{{ key }}:</strong> {{ property[key] }}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div *ngIf="otherProperties.length === 0">
-          <p>No Other Properties found for this PAP.</p>
-        </div>
-      </div>
-    </section>
-    <!-- Files Section -->
-<section>
-  <h2 (click)="expandedFilesSection = !expandedFilesSection" class="section-header">
-    Files
-    <span *ngIf="expandedFilesSection">[-]</span>
-    <span *ngIf="!expandedFilesSection">[+]</span>
-  </h2>
-
-  <div *ngIf="expandedFilesSection" [@expandCollapseAnimation]>
-    <div *ngIf="files.length > 0">
-      <div *ngFor="let file of files; let i = index" class="file-item">
-        <h3 (click)="toggleFileContent(i)" class="file-header">
-          {{ file.name }}
-          <span *ngIf="expandedFileIndex === i">[-]</span>
-          <span *ngIf="expandedFileIndex !== i">[+]</span>
-        </h3>
-
-        <!-- Display PDF content in an iframe if loaded -->
-        <div *ngIf="expandedFileIndex === i" class="file-content">
-          <div *ngIf="file.loading">Loading...</div>
-          <iframe *ngIf="!file.loading && file.pdfUrl" [src]="file.pdfUrl" width="100%" height="600px"></iframe>
-        </div>
-      </div>
-    </div>
-    <div *ngIf="files.length === 0">
-      <p>No files available for this PAP.</p>
-    </div>
-  </div>
-</section>
+    <ng-container *ngIf="selectedTab === 6">
+      <!-- Files Section -->
+      <app-files-section [files]="files" [loading]="loading" (toggleFileContent)="toggleFileContent($event)"></app-files-section>
+    </ng-container>
   </div>
 </div>
