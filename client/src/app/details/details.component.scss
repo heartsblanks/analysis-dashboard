@@ -1,12 +1,15 @@
 .pap-details {
-  max-width: 800px;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 0 10px; // Add padding for better spacing on the sides
   font-family: 'Roboto', sans-serif;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .title {
   text-align: center;
-  font-size: 32px;
+  font-size: 2rem;
   margin-bottom: 20px;
   color: #333;
 }
@@ -15,14 +18,15 @@
   cursor: pointer;
   background-color: #007bff;
   color: white;
-  padding: 10px 20px;
+  padding: 10px;
   margin: 10px 0;
-  font-size: 20px;
+  font-size: 1.2rem;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-between;
 }
+
 
 .accordion-item {
   border: 1px solid #ccc;
@@ -172,16 +176,11 @@
   justify-content: space-between;
 }
 
-.file-content {
-  margin-top: 10px;
-  padding: 10px;
-  border-top: 1px solid #ddd;
-}
 
 .file-content iframe {
-  border: none;
   width: 100%;
-  height: 600px;
+  height: 80vh; // Use viewport height to adjust dynamically
+  max-height: 600px; // Set max-height for better control
 }
 
 .tabs {
@@ -193,7 +192,7 @@
 .tabs button {
   flex: 1;
   padding: 10px;
-  font-size: 18px;
+  font-size: 1rem;
   cursor: pointer;
   background-color: #f8f9fa;
   border: none;
@@ -212,4 +211,23 @@
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 160px); // Adjust max height for better fit within the viewport
+  overflow-y: auto; // Enable scrolling if content overflows
+}
+
+/* Adjust for smaller screens */
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .section-header {
+    font-size: 1rem;
+    padding: 8px;
+  }
+
+  .tabs button {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
 }
