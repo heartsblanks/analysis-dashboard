@@ -189,17 +189,67 @@
   margin-bottom: 10px;
 }
 
-.tabs button {
-  flex: 1;
-  padding: 10px;
-  font-size: 1rem;
-  cursor: pointer;
-  background-color: #f8f9fa;
-  border: none;
-  outline: none;
-  transition: background-color 0.3s;
-}
+// SCSS for .tab-button styling
 
+.tab-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 20px;           // Rounded corners for a modern look
+  color: #4a90e2;                // Primary color for the text
+  background-color: transparent; // Transparent background by default
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;     // Smooth transition for hover effects
+
+  // Hover effect
+  &:hover {
+    background-color: #4a90e2;   // Background changes to primary color on hover
+    color: white;                // Text color changes to white
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Adds a shadow for a lifted effect
+  }
+
+  // Active state effect (when the tab is selected)
+  &.active {
+    background-color: #4a90e2;
+    color: white;
+    font-weight: bold;
+  }
+
+  // Animated underline
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 100%;
+    bottom: -4px;
+    height: 3px;
+    background: #4a90e2;         // Underline color
+    transition: right 0.3s ease; // Smooth animation for the underline
+  }
+
+  &:hover::after {
+    right: 0;                    // Underline slides in from left to right
+  }
+
+  // Icon styling for Font Awesome icons within the button
+  i {
+    margin-right: 8px;           // Space between icon and text
+    transition: transform 0.3s ease;
+
+    // Icon rotation effect on hover
+    &:hover {
+      transform: rotate(15deg); // Slight rotation for a fun effect
+    }
+  }
+
+  // Optional: Add a "pressed" effect when the button is clicked
+  &:active {
+    transform: scale(0.95);       // Slightly shrink the button to simulate pressing
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.2);
+  }
+}
 .tabs button.active {
   background-color: #007bff;
   color: white;
