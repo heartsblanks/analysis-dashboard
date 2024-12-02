@@ -6,7 +6,8 @@ import * as d3 from 'd3';
 @Component({
   selector: 'app-bubbles',
   templateUrl: './bubbles.component.html',
-  styleUrls: ['./bubbles.component.scss']
+  styleUrls: ['./bubbles.component.scss'],
+  standalone: true,
 })
 export class BubblesComponent implements OnInit {
   paps: any[] = [];  // Store PAP data

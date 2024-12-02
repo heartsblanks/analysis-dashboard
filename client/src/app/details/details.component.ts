@@ -16,6 +16,7 @@ interface FileEntry {
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss'],
+  standalone: true,
    animations: [
     trigger('fadeInOut', [
       transition(':enter', [
@@ -34,7 +35,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
   private pollingSubscription: Subscription | null = null;
   selectedTab: number = 0;  // Track the selected tab index
   tabs: string[] = ["Queues", "UEMBD", "Databases", "Webservices", "Integration Servers", "Other Properties", "Files"];
-  
+
   queues: any[] = [];
   uembdEntries: any = { uembd02t: [], uembd20t: [], uembd21t: [] };
   webservices: any[] = [];
