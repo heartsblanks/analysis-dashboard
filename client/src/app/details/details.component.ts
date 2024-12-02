@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 import { interval, Subscription } from 'rxjs';
-import { trigger, transition, style, animate } from '@angular/animations';
 
 
 interface FileEntry {
