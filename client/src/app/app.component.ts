@@ -1,18 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { BubblesComponent } from './bubbles/bubbles.component';
-import { DetailsComponent } from './details/details.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   standalone: true,
-  imports: [
-    RouterModule.forRoot([
-      { path: '', component: BubblesComponent },
-      { path: 'details', component: DetailsComponent },
-    ]),
-  ],
+  imports: [RouterOutlet], // Include RouterOutlet here
 })
 export class AppComponent {}
